@@ -15,7 +15,7 @@
 ## 데이터베이스 셋업
 
 docker-compose파일로 데이터베이스 셋업을 진행합니다.
-기본으로 mysql로 설정합니다.
+우선 배포를 heroku를 이용하기 때문에 DB는 postgresql로 설정합니다.
 
 ```
 npm run db:up --env=development
@@ -29,18 +29,17 @@ npm run db:up --env=test
 
 ```
 # 서버 포트
-PORT=3000
+PORT=8000
 
-# MYSQL SETUP
-MYSQL_HOSTNAME=localhost
-MYSQL_USERNAME=test
-MYSQL_PASSWORD=test
-MYSQL_PORT=3306
-MYSQL_DATABASE=development
-MYSQL_CONNECTION_TIMEOUT=2000
+# POSTGRES SETUP
+POSTGRES_HOSTNAME=호스트명
+POSTGRES_USER=유저명
+POSTGRES_PASSWORD=패스워드
+POSTGRES_PORT=포트번호
+POSTGRES_DB=DB명
 
 # JWT 설정
-JWT_SECRET=jwtsecret
+JWT_SECRET=JWT_SECRET_KEY
 JWT_ACCESS_EXPIRATION_MINUTES=30
 JWT_REFRESH_EXPIRATION_DAYS=30
 ```
