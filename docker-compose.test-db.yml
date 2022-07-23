@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  postgres-test:
+    platform: linux/x86_64
+    container_name: postgres-test
+    image: 'postgres:14.4'
+    restart: always
+    env_file:
+      - ./.env.test
+    ports:
+      - '5433:5432'
