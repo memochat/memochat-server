@@ -3,6 +3,7 @@ import { MemoRoom } from '../memo-room.entity';
 import { MemoRoomCatrgory } from '../type/memo-room-category';
 import { DatabaseModule } from '../../../common/config/database/database.module';
 import { DataSource } from 'typeorm';
+import { getMemoRoom } from './memo-room.fixture';
 
 describe('MemoRoom Entity Test', () => {
   let dataSource: DataSource;
@@ -39,6 +40,23 @@ describe('MemoRoom Entity Test', () => {
       image: '',
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
+    });
+  });
+
+  test('read', async () => {
+    // given
+    const memoRoom = getMemoRoom();
+    const em = dataSource.createEntityManager();
+
+    await em.save(memoRoom);
+
+    // when
+    const savedMemoRoom = await em.findOne(MemoRoom, { where: { id: memoRoom.id } });
+
+    // then
+
+    expect(savedMemoRoom).toMatchObject({
+      ...memoRoom,
     });
   });
 });
