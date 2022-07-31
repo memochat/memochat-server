@@ -12,7 +12,7 @@ export const setSwagger = (app: INestApplication) => {
   const config = new DocumentBuilder()
     .setTitle('Wanted-Pre-Onboarding REST API')
     .setVersion('1.0.0')
-    .addServer(`http://localhost:${appConfigService.port}`)
+    .addServer(`http://localhost:${appConfigService.port}/v1`)
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'bearerAuth')
     .build();
 
