@@ -47,6 +47,10 @@ export class User extends BaseEntity {
   @IsBoolean()
   verified: boolean;
 
+  createNickname(nickname: string): string {
+    return nickname.split('@').at(0).slice(0, 10);
+  }
+
   updateNickname(nickname: string) {
     this.nickname = nickname;
   }
