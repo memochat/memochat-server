@@ -9,7 +9,7 @@ export const setSwagger = (app: INestApplication) => {
   const appConfigService = app.get(AppConfigService);
 
   const config = new DocumentBuilder()
-    .setTitle('Wanted-Pre-Onboarding REST API')
+    .setTitle('MemoChat REST API')
     .setVersion('1.0.0')
     .addServer(`http://localhost:${appConfigService.port}`)
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'bearerAuth')
