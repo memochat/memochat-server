@@ -1,5 +1,6 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { VerficationNotFoundException } from 'src/common/exceptions/verification-not-found.exception';
 import { ApiErrorResponse } from '../../common/decorators/api-error-response.decorator';
 import { ApiSuccessResponse } from '../../common/decorators/api-success-response.decorator';
 import { AlreadyExistEmailException } from '../../common/exceptions/already-exist-email.exception';
@@ -12,6 +13,7 @@ import { AuthTokenDto } from './dto/auth-token.dto';
 import { RefreshTokensRequestDto } from './dto/refresh-tokens-request.dto';
 import { SigninRequestDto } from './dto/signin-request.dto';
 import { SignupRequestDto } from './dto/signup-request.dto';
+import { VerifyEmailRequestDto } from './dto/verify-email-request.dto';
 
 @Controller('/auth')
 @ApiTags('Auth')
@@ -43,5 +45,12 @@ export class AuthController {
     const tokens = await this.authService.refreshAuthToken(refreshTokensRequest.refreshToken);
 
     return ResponseEntity.OK_WITH_DATA(AuthTokenDto.of(tokens));
+  }
+
+  @Post('/verify-email')
+  @ApiSuccessResponse(HttpStatus.OK, AuthTokenDto)
+  @ApiErrorResponse(VerficationNotFoundException)
+  async verifyEmail(@Body() verifyEmailRequest: VerifyEmailRequestDto) {
+    return await this.authService.verifyEmail(verifyEmailRequest);
   }
 }
