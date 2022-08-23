@@ -21,6 +21,7 @@ describe('S3 Config Module Test', () => {
       const accessKey = s3ConfigService.accessKey;
 
       // then
+      expect(accessKey).toBeDefined();
       expect(accessKey).toEqual(process.env.S3_ACCESS_KEY);
     });
 
@@ -31,6 +32,7 @@ describe('S3 Config Module Test', () => {
       const secretAccessKey = s3ConfigService.secretAccessKey;
 
       // then
+      expect(secretAccessKey).toBeDefined();
       expect(secretAccessKey).toEqual(process.env.S3_SECRET_ACCESS_KEY);
     });
     test('S3_REGION를 반환하는가', async () => {
@@ -40,6 +42,7 @@ describe('S3 Config Module Test', () => {
       const region = s3ConfigService.region;
 
       // then
+      expect(region).toBeDefined();
       expect(region).toEqual(process.env.S3_REGION);
     });
     test('S3_IMAGE_BUCKET_NAME를 반환하는가', async () => {
@@ -49,6 +52,7 @@ describe('S3 Config Module Test', () => {
       const imageBucketName = s3ConfigService.imageBucket;
 
       // then
+      expect(imageBucketName).toBeDefined();
       expect(imageBucketName).toEqual(process.env.S3_IMAGE_BUCKET_NAME);
     });
   });
