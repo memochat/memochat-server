@@ -13,4 +13,8 @@ export class ImageService {
 
     return { presignedUrl, imageKey: key };
   }
+
+  async uploadPresignedUrls(type: ImageType, count: number) {
+    return Promise.all(Array.from({ length: count }).map(() => this.uploadPresignedUrl(type)));
+  }
 }
