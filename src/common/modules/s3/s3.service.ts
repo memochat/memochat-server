@@ -18,7 +18,7 @@ export class S3Service {
   }
 
   public presignForPut(key: string) {
-    return this.s3.getSignedUrlPromise('putObject', {
+    return this.s3.getSignedUrl('putObject', {
       Bucket: this.s3ConfigService.imageBucket,
       Key: key,
       Expires: S3Service.PUT_OBJECT_PRESIGNED_URL_EXPIRES,
@@ -26,7 +26,7 @@ export class S3Service {
   }
 
   public presignForGet(key: string) {
-    return this.s3.getSignedUrlPromise('getObject', {
+    return this.s3.getSignedUrl('getObject', {
       Bucket: this.s3ConfigService.imageBucket,
       Key: key,
       Expires: S3Service.GET_OBJECT_PRESIGNED_URL_EXPIRES,

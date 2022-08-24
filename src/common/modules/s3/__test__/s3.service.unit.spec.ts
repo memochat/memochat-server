@@ -24,15 +24,4 @@ describe('S3 Service Test', () => {
     // then
     expect(result).toEqual(expect.any(String));
   });
-
-  test('read를 위한 presignedURL이 생성되는가', async () => {
-    // given
-    const key = 'test.png';
-
-    // when
-    const result = await s3Service.presignForGet(key);
-
-    // then
-    expect(result).toEqual(expect.any(String));
-  });
 });
