@@ -13,7 +13,7 @@ export class ImageService {
 
     return mimeTypes.map((mimeType) => {
       const key = `${path}/${uuid()}.${MimeTypes.extension(mimeType)}`;
-      const presignedUrl = this.s3Service.presignForPut(key);
+      const presignedUrl = this.s3Service.presignForPut(key, mimeType);
 
       return { presignedUrl, key };
     });

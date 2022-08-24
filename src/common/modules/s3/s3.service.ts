@@ -17,11 +17,12 @@ export class S3Service {
     });
   }
 
-  public presignForPut(key: string) {
+  public presignForPut(key: string, type: string) {
     return this.s3.getSignedUrl('putObject', {
       Bucket: this.s3ConfigService.imageBucket,
       Key: key,
       Expires: S3Service.PUT_OBJECT_PRESIGNED_URL_EXPIRES,
+      ContentType: type,
     });
   }
 
