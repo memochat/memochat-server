@@ -12,7 +12,7 @@ export class ImageService {
     const path = type.code.toLowerCase();
 
     return mimeTypes.map((mimeType) => {
-      const key = `${path}/${uuid()}.${MimeTypes.extension(mimeType)}`;
+      const key = `${path}/origin/${uuid()}.${MimeTypes.extension(mimeType)}`;
       const presignedUrl = this.s3Service.presignForPut(key, mimeType);
 
       return { presignedUrl, key };
