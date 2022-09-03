@@ -77,4 +77,8 @@ export class MemoRoomService {
 
     return memoRoom;
   }
+
+  async getCategories() {
+    return this.roomTypeRepository.find();
+  }
 }

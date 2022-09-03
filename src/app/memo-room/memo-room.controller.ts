@@ -15,6 +15,7 @@ import { TooManyMemoRoomsException } from '../../common/exceptions/too-many-memo
 import { UpdateMemoRoomRequest } from './dto/update-memo-room-request.dto';
 import { MemoRoomNotFoundException } from '../../common/exceptions/memoroom-not-found.exception';
 import { MemoRoomDto } from './dto/memo-room.dto';
+import { RoomTypeDto } from './dto/room-type.dto';
 
 @Controller('/memo-rooms')
 @ApiTags('MemoRoom')
@@ -41,6 +42,15 @@ export class MemoRoomController {
     @Body() body: UpdateMemoRoomRequest,
   ) {
     await this.memoRoomService.update({ user, memoRoomId, name: body.name, roomTypeId: body.roomTypeId });
+  }
+
+  @Get('/categories')
+  @Auth()
+  @ApiSuccessResponse(HttpStatus.OK, RoomTypeDto, { isArray: true })
+  async getCategories() {
+    const categories = await this.memoRoomService.getCategories();
+
+    return ResponseEntity.OK_WITH_DATA(categories.map((category) => RoomTypeDto.of(category)));
   }
 
   @Get('/')
