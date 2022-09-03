@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
 import { DatabaseModule } from '../../../common/config/database/database.module';
 import { RoomType } from '../room-type.entity';
-import { MemoRoomCatrgory } from '../type/memo-room-category';
+import { MemoRoomCategory } from '../type/memo-room-category';
 import { getRoomType } from './room-type.fixture';
 
 describe('RoomType Entity Text', () => {
@@ -23,7 +23,7 @@ describe('RoomType Entity Text', () => {
   test('create', async () => {
     // given
     const roomType = new RoomType();
-    roomType.category = MemoRoomCatrgory.STUDY;
+    roomType.category = MemoRoomCategory.STUDY;
     roomType.thumbnail = 'test.png';
 
     const em = dataSource.createEntityManager();
@@ -34,7 +34,7 @@ describe('RoomType Entity Text', () => {
     // then
     expect(roomType).toMatchObject({
       id: expect.any(Number),
-      category: MemoRoomCatrgory.STUDY,
+      category: MemoRoomCategory.STUDY,
       thumbnail: 'test.png',
     });
   });

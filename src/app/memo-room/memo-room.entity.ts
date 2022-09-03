@@ -5,6 +5,8 @@ import { RoomType } from './room-type.entity';
 
 @Entity({ name: 'memo_room' })
 export class MemoRoom extends BaseEntity {
+  static MAX_ROOM_COUNT = 20;
+
   @ManyToOne(() => User, { lazy: true, nullable: false })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: Promise<User>;

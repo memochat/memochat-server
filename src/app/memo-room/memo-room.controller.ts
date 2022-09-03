@@ -21,7 +21,7 @@ export class MemoRoomController {
   @ApiSuccessResponse(HttpStatus.CREATED, MemoRoomId)
   @ApiErrorResponse(BadParameterException)
   async create(@CurrentUser() user: User, @Body() body: CreateMemoRoomRequest) {
-    const memoRoom = await this.memoRoomService.create(user, body.toEntity());
+    const memoRoom = await this.memoRoomService.create({ user, name: body.name, roomTypeId: body.roomTypeId });
 
     return ResponseEntity.OK_WITH_DATA(MemoRoomId.of(memoRoom));
   }

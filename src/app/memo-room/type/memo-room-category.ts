@@ -1,16 +1,16 @@
 import { Enum, EnumType } from 'ts-jenum';
 
 @Enum('_name')
-export class MemoRoomCatrgory extends EnumType<MemoRoomCatrgory>() {
-  static readonly DEFAULT = new MemoRoomCatrgory('DEFAULT');
+export class MemoRoomCategory extends EnumType<MemoRoomCategory>() {
+  static readonly DEFAULT = new MemoRoomCategory('DEFAULT');
 
-  static readonly WISHLIST = new MemoRoomCatrgory('WISHLIST');
+  static readonly WISHLIST = new MemoRoomCategory('WISHLIST');
 
-  static readonly CALENDER = new MemoRoomCatrgory('CALENDER');
+  static readonly CALENDER = new MemoRoomCategory('CALENDER');
 
-  static readonly BUDGET = new MemoRoomCatrgory('BUDGET');
+  static readonly BUDGET = new MemoRoomCategory('BUDGET');
 
-  static readonly STUDY = new MemoRoomCatrgory('STUDY');
+  static readonly STUDY = new MemoRoomCategory('STUDY');
 
   constructor(private readonly _name: string) {
     super();
@@ -20,7 +20,7 @@ export class MemoRoomCatrgory extends EnumType<MemoRoomCatrgory>() {
     return this._name;
   }
 
-  equals(v: MemoRoomCatrgory): boolean {
+  equals(v: MemoRoomCategory): boolean {
     return this.name === v.name;
   }
 }
