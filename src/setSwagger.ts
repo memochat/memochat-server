@@ -33,6 +33,7 @@ export const setSwagger = (app: INestApplication) => {
 
         return result;
       },
+      persistAuthorization: true,
     },
   });
 };

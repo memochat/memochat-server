@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Param, ParseIntPipe, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '../user/user.entity';
 import { ApiErrorResponse } from '../../common/decorators/api-error-response.decorator';
@@ -14,6 +14,7 @@ import { RoomTypeNotFoundException } from '../../common/exceptions/room-type-not
 import { TooManyMemoRoomsException } from '../../common/exceptions/too-many-memorooms.exception';
 import { UpdateMemoRoomRequest } from './dto/update-memo-room-request.dto';
 import { MemoRoomNotFoundException } from '../../common/exceptions/memoroom-not-found.exception';
+import { MemoRoomDto } from './dto/memo-room.dto';
 
 @Controller('/memo-rooms')
 @ApiTags('MemoRoom')
@@ -39,6 +40,15 @@ export class MemoRoomController {
     @Param('memoRoomId', ParseIntPipe) memoRoomId: number,
     @Body() body: UpdateMemoRoomRequest,
   ) {
-    await this.memoRoomService.update({ memoRoomId, name: body.name, roomTypeId: body.roomTypeId });
+    await this.memoRoomService.update({ user, memoRoomId, name: body.name, roomTypeId: body.roomTypeId });
+  }
+
+  @Get('/')
+  @Auth()
+  @ApiSuccessResponse(HttpStatus.OK, MemoRoomDto, { isArray: true })
+  async gets(@CurrentUser() user: User) {
+    const memoRooms = await this.memoRoomService.gets({ user });
+
+    return ResponseEntity.OK_WITH_DATA(memoRooms.map((memoRoom) => MemoRoomDto.of(memoRoom)));
   }
 }

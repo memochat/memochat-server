@@ -35,8 +35,18 @@ export class MemoRoomService {
     return memoRoom;
   }
 
-  async update({ memoRoomId, name, roomTypeId }: { memoRoomId: number; name: string; roomTypeId: number }) {
-    const memoRoom = await this.memoRoomRepository.findOneBy({ id: memoRoomId });
+  async update({
+    user,
+    memoRoomId,
+    name,
+    roomTypeId,
+  }: {
+    user: User;
+    memoRoomId: number;
+    name: string;
+    roomTypeId: number;
+  }) {
+    const memoRoom = await this.memoRoomRepository.findOneBy({ user: { id: user.id }, id: memoRoomId });
     if (!memoRoom) {
       throw new MemoRoomNotFoundException();
     }
@@ -52,7 +62,10 @@ export class MemoRoomService {
     this.memoRoomRepository.save(memoRoom, { reload: false });
   }
 
-  async isMemoRoomOfUser(user: User, memoRoomId: number) {
-    return !!(await this.memoRoomRepository.countBy({ user: { id: user.id }, id: memoRoomId }));
+  async gets({ user }: { user: User }) {
+    //TODO: 첫번째 채팅 + 최근 순 정렬 필요 + 썸네일 presign 필요
+    const memoRooms = this.memoRoomRepository.find({ where: { user: { id: user.id } } });
+
+    return memoRooms;
   }
 }
