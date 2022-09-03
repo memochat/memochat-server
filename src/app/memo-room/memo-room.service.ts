@@ -64,8 +64,17 @@ export class MemoRoomService {
 
   async gets({ user }: { user: User }) {
     //TODO: 첫번째 채팅 + 최근 순 정렬 필요 + 썸네일 presign 필요
-    const memoRooms = this.memoRoomRepository.find({ where: { user: { id: user.id } } });
+    const memoRooms = await this.memoRoomRepository.find({ where: { user: { id: user.id } } });
 
     return memoRooms;
+  }
+
+  async get({ user, memoRoomId }: { user: User; memoRoomId: number }) {
+    const memoRoom = await this.memoRoomRepository.findOneBy({ user: { id: user.id }, id: memoRoomId });
+    if (!memoRoom) {
+      throw new MemoRoomNotFoundException();
+    }
+
+    return memoRoom;
   }
 }

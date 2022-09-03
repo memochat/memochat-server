@@ -51,4 +51,14 @@ export class MemoRoomController {
 
     return ResponseEntity.OK_WITH_DATA(memoRooms.map((memoRoom) => MemoRoomDto.of(memoRoom)));
   }
+
+  @Get('/:id')
+  @Auth()
+  @ApiSuccessResponse(HttpStatus.OK, MemoRoomDto)
+  @ApiErrorResponse(MemoRoomNotFoundException)
+  async get(@CurrentUser() user: User, @Param('id', ParseIntPipe) memoRoomId: number) {
+    const memoRoom = await this.memoRoomService.get({ user, memoRoomId });
+
+    return ResponseEntity.OK_WITH_DATA(MemoRoomDto.of(memoRoom));
+  }
 }
