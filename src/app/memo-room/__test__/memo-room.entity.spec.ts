@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
 import { MemoRoom } from '../memo-room.entity';
-import { MemoRoomCatrgory } from '../type/memo-room-category';
 import { DatabaseModule } from '../../../common/config/database/database.module';
 import { DataSource } from 'typeorm';
 import { getMemoRoom } from './memo-room.fixture';
 import { getUser } from '../../user/__test__/user.fixture';
+import { getRoomType } from './room-type.fixture';
 
 describe('MemoRoom Entity Test', () => {
   let dataSource: DataSource;
@@ -25,13 +25,16 @@ describe('MemoRoom Entity Test', () => {
     // given
     const user = getUser();
 
+    const roomType = getRoomType();
+
     const memoRoom = new MemoRoom();
     memoRoom.name = 'test';
-    memoRoom.category = MemoRoomCatrgory.DEFAULT;
     memoRoom.setUser(user);
+    memoRoom.roomType = roomType;
 
     const em = dataSource.createEntityManager();
     await em.save(user);
+    await em.save(roomType);
 
     // when
     await em.save(memoRoom);
@@ -40,9 +43,9 @@ describe('MemoRoom Entity Test', () => {
     expect(memoRoom).toMatchObject({
       id: expect.any(Number),
       name: 'test',
-      category: MemoRoomCatrgory.DEFAULT,
-      isPinned: false,
-      image: '',
+      roomType: expect.objectContaining({
+        ...roomType,
+      }),
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
     });
@@ -51,12 +54,14 @@ describe('MemoRoom Entity Test', () => {
   test('read', async () => {
     // given
     const user = getUser();
+    const roomType = getRoomType();
 
-    const memoRoom = getMemoRoom({ user: Promise.resolve(user) });
+    const memoRoom = getMemoRoom({ user: Promise.resolve(user), roomType });
 
     const em = dataSource.createEntityManager();
 
     await em.save(user);
+    await em.save(roomType);
     await em.save(memoRoom);
 
     // when
@@ -66,9 +71,9 @@ describe('MemoRoom Entity Test', () => {
     expect(savedMemoRoom).toMatchObject({
       id: memoRoom.id,
       name: memoRoom.name,
-      category: memoRoom.category,
-      isPinned: false,
-      image: '',
+      roomType: expect.objectContaining({
+        ...roomType,
+      }),
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
     });
