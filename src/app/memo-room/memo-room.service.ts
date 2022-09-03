@@ -5,6 +5,7 @@ import { User } from '../user/user.entity';
 import { MemoRoomRepository } from './memo-room.repository';
 import { RoomTypeRepository } from './room-type.repository';
 import { TooManyMemoRoomsException } from '../../common/exceptions/too-many-memorooms.exception';
+import { MemoRoomNotFoundException } from '../../common/exceptions/memoroom-not-found.exception';
 
 @Injectable()
 export class MemoRoomService {
@@ -32,5 +33,26 @@ export class MemoRoomService {
     await this.memoRoomRepository.save(memoRoom);
 
     return memoRoom;
+  }
+
+  async update({ memoRoomId, name, roomTypeId }: { memoRoomId: number; name: string; roomTypeId: number }) {
+    const memoRoom = await this.memoRoomRepository.findOneBy({ id: memoRoomId });
+    if (!memoRoom) {
+      throw new MemoRoomNotFoundException();
+    }
+
+    const roomType = await this.roomTypeRepository.findOneBy({ id: roomTypeId });
+    if (!roomType) {
+      throw new RoomTypeNotFoundException();
+    }
+
+    memoRoom.name = name;
+    memoRoom.roomType = roomType;
+
+    this.memoRoomRepository.save(memoRoom, { reload: false });
+  }
+
+  async isMemoRoomOfUser(user: User, memoRoomId: number) {
+    return !!(await this.memoRoomRepository.countBy({ user: { id: user.id }, id: memoRoomId }));
   }
 }
