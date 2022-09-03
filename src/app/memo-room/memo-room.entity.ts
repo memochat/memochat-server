@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../common/base-entity';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from '../user/user.entity';
 import { RoomType } from './room-type.entity';
 
@@ -16,6 +16,9 @@ export class MemoRoom extends BaseEntity {
 
   @ManyToOne(() => RoomType, { eager: true, nullable: false })
   roomType: RoomType;
+
+  @DeleteDateColumn()
+  deletedAt: Date | null;
 
   setUser(user: User) {
     this.user = Promise.resolve(user);

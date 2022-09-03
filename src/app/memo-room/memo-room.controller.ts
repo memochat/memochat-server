@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '../user/user.entity';
 import { ApiErrorResponse } from '../../common/decorators/api-error-response.decorator';
@@ -70,5 +70,12 @@ export class MemoRoomController {
     const memoRoom = await this.memoRoomService.get({ user, memoRoomId });
 
     return ResponseEntity.OK_WITH_DATA(MemoRoomDto.of(memoRoom));
+  }
+
+  @Delete('/:id')
+  @Auth()
+  @ApiSuccessResponse(HttpStatus.NO_CONTENT)
+  async delete(@CurrentUser() user: User, @Param('id', ParseIntPipe) memoRoomId: number) {
+    await this.memoRoomService.delete({ user, memoRoomId });
   }
 }

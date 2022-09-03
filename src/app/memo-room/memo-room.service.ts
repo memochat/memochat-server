@@ -81,4 +81,8 @@ export class MemoRoomService {
   async getCategories() {
     return this.roomTypeRepository.find();
   }
+
+  async delete({ user, memoRoomId }: { user: User; memoRoomId: number }) {
+    await this.memoRoomRepository.softDelete({ id: memoRoomId, user: { id: user.id } });
+  }
 }
