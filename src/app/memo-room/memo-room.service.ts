@@ -20,7 +20,7 @@ export class MemoRoomService {
       throw new RoomTypeNotFoundException();
     }
 
-    const roomCount = await this.memoRoomRepository.countBy({ user: { id: user.id } });
+    const roomCount = await this.memoRoomRepository.countByUserId(user.id);
     if (roomCount >= MemoRoom.MAX_ROOM_COUNT) {
       throw new TooManyMemoRoomsException(`최대 ${MemoRoom.MAX_ROOM_COUNT}개의 룸만 만들 수 있습니다.`);
     }
