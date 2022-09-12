@@ -30,7 +30,16 @@ export class MemoRoomService {
     memoRoom.name = name;
     memoRoom.roomType = roomType;
 
-    await this.memoRoomRepository.save(memoRoom);
+    const firstRoom = await this.memoRoomRepository.findFirstRoomByUserId(user.id);
+
+    if (!firstRoom) {
+      return await this.memoRoomRepository.save(memoRoom);
+    }
+
+    memoRoom.nextRoom = firstRoom;
+    firstRoom.previousRoom = memoRoom;
+
+    await this.memoRoomRepository.save([memoRoom, firstRoom]);
 
     return memoRoom;
   }

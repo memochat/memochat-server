@@ -9,6 +9,8 @@ export class MemoRoomCategoryTransformer implements ValueTransformer {
   }
 
   from(databaseValue: string): MemoRoomCategory {
+    if (!databaseValue) return null;
+
     return MemoRoomCategory.find(databaseValue);
   }
 }
