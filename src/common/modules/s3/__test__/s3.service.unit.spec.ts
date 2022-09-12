@@ -17,9 +17,10 @@ describe('S3 Service Test', () => {
   test('upload를 위한 presignedURL이 생성되는가', async () => {
     // given
     const key = 'test.png';
+    const type = 'image/png';
 
     // when
-    const result = await s3Service.presignForPut(key);
+    const result = s3Service.presignForPut(key, type);
 
     // then
     expect(result).toEqual(expect.any(String));
