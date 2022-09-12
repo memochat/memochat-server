@@ -17,7 +17,7 @@ export class MemoRoom extends BaseEntity {
   @ManyToOne(() => RoomType, { eager: true, nullable: false })
   roomType: RoomType;
 
-  @DeleteDateColumn()
+  @Column({ type: 'timestamp', nullable: true })
   deletedAt: Date | null;
 
   @OneToOne(() => MemoRoom, (memoRoom) => memoRoom.id, { nullable: true, createForeignKeyConstraints: false })
@@ -36,5 +36,13 @@ export class MemoRoom extends BaseEntity {
 
   setUser(user: User) {
     this.user = Promise.resolve(user);
+  }
+
+  remove() {
+    this.deletedAt = new Date();
+    this.previousRoom = null;
+    this.previousRoomId = null;
+    this.nextRoom = null;
+    this.nextRoomId = null;
   }
 }
