@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MemoRoom } from './memo-room.entity';
-import { DataSource, IsNull, Repository } from 'typeorm';
+import { DataSource, FindManyOptions, FindOneOptions, FindOptionsWhere, IsNull, Repository } from 'typeorm';
 
 @Injectable()
 export class MemoRoomRepository extends Repository<MemoRoom> {
@@ -17,5 +17,17 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
 
   countByUserId(userId: number) {
     return this.countBy({ user: { id: userId }, deletedAt: IsNull() });
+  }
+
+  findOneExludeDeletedRow(options: FindOneOptions<MemoRoom>): Promise<MemoRoom> {
+    return this.findOne({ ...options, where: { ...options.where, deletedAt: IsNull() } });
+  }
+
+  findOneExludeDeletedRowBy(where: FindOptionsWhere<MemoRoom> | FindOptionsWhere<MemoRoom>[]): Promise<MemoRoom> {
+    return this.findOneBy({ ...where, deletedAt: IsNull() });
+  }
+
+  findExcludeDeletedRows(options: FindManyOptions<MemoRoom> = {}): Promise<MemoRoom[]> {
+    return this.find({ ...options, where: { ...options.where, deletedAt: IsNull() } });
   }
 }
