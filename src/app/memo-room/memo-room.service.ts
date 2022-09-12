@@ -72,8 +72,7 @@ export class MemoRoomService {
   }
 
   async gets({ user }: { user: User }) {
-    //TODO: 첫번째 채팅 + 최근 순 정렬 필요 + 썸네일 presign 필요
-    const memoRooms = await this.memoRoomRepository.findExcludeDeletedRows({ where: { user: { id: user.id } } });
+    const memoRooms = await this.memoRoomRepository.getAllMemoRoomsWithRecursiveByUserId(user.id);
 
     return memoRooms;
   }
