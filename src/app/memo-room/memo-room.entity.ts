@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../common/base-entity';
-import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { User } from '../user/user.entity';
 import { RoomType } from './room-type.entity';
 
