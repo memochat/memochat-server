@@ -2,9 +2,9 @@ import { applyDecorators, HttpCode, HttpStatus, Type } from '@nestjs/common';
 import { ApiProperty, ApiResponse } from '@nestjs/swagger';
 import { ResponseEntity } from '../response/response-entity';
 
-export function ApiSuccessResponse(status: HttpStatus, dataType: Type<any> = String) {
+export function ApiSuccessResponse(status: HttpStatus, dataType: Type<any> = String, { isArray } = { isArray: false }) {
   class Temp extends ResponseEntity<any> {
-    @ApiProperty({ type: dataType, example: dataType === String ? '' : () => dataType })
+    @ApiProperty({ type: dataType, example: dataType === String ? '' : () => dataType, isArray })
     get data() {
       return super.data;
     }

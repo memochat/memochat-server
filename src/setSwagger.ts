@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AuthModule } from './app/auth/auth.module';
+import { ImageModule } from './app/image/image.module';
 import { UserModule } from './app/user/user.module';
 import { AppConfigService } from './common/config/app/config.service';
 import { ResponseEntity } from './common/response/response-entity';
@@ -11,12 +12,12 @@ export const setSwagger = (app: INestApplication) => {
   const config = new DocumentBuilder()
     .setTitle('Wanted-Pre-Onboarding REST API')
     .setVersion('1.0.0')
-    .addServer(`http://localhost:${appConfigService.port}`)
+    .addServer(`http://localhost:${appConfigService.port}/v1`)
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'bearerAuth')
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
-    include: [AuthModule, UserModule],
+    include: [AuthModule, UserModule, ImageModule],
     extraModels: [ResponseEntity],
   });
 
