@@ -36,7 +36,7 @@ describe('Memo Room Service Test', () => {
   });
 
   describe('create', () => {
-    test('해당하는 유저의 메모룸이 생성 되는가', async () => {
+    test('해당하는 유저의 첫번째 메모룸이 생성 되는가', async () => {
       // given
       const user = getUser();
 
@@ -53,6 +53,36 @@ describe('Memo Room Service Test', () => {
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
       });
+    });
+
+    test('해당하는 유저의 여러개의 메모룸이 순서에 맞게 생성 되는가', async () => {
+      // given
+      const user = getUser();
+
+      await em.save(user);
+
+      // when
+      await memoRoomService.create({ user, name: 'first', roomTypeId: 1 });
+      await memoRoomService.create({ user, name: 'second', roomTypeId: 1 });
+      await memoRoomService.create({ user, name: 'third', roomTypeId: 1 });
+
+      // then
+      const memoRooms = await em.find(MemoRoom, {
+        where: { user: { id: user.id } },
+        relations: { previousRoom: true, nextRoom: true },
+      });
+      expect(memoRooms).toHaveLength(3);
+
+      const firstMemoRoom = memoRooms.find((v) => v.name === 'first');
+      const secondMemoRoom = memoRooms.find((v) => v.name === 'second');
+      const thirdMemoRoom = memoRooms.find((v) => v.name === 'third');
+
+      expect(firstMemoRoom).toMatchObject(secondMemoRoom.nextRoom);
+      expect(firstMemoRoom.nextRoom).toBeNull();
+      expect(secondMemoRoom).toMatchObject(firstMemoRoom.previousRoom);
+      expect(secondMemoRoom).toMatchObject(thirdMemoRoom.nextRoom);
+      expect(thirdMemoRoom).toMatchObject(secondMemoRoom.previousRoom);
+      expect(thirdMemoRoom.previousRoom).toBeNull();
     });
 
     test('해당하는 룸타입이 존재하지 않는 경우 RoomTypeNotFoundException이 발생하는가', async () => {
