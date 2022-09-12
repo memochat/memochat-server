@@ -114,4 +114,59 @@ describe('Memo Room Service Test', () => {
       expect(result).rejects.toThrowError(TooManyMemoRoomsException);
     });
   });
+
+  describe('delete', () => {
+    test('해당하는 메모룸이 삭제되는가', async () => {
+      // given
+      const user = getUser();
+
+      await em.save(user);
+
+      const firstRoom = getMemoRoom({ user: Promise.resolve(user), roomType: roomTypes[0] });
+      const secondRoom = getMemoRoom({ user: Promise.resolve(user), roomType: roomTypes[0] });
+      const thirdRoom = getMemoRoom({ user: Promise.resolve(user), roomType: roomTypes[0] });
+
+      await em.save([firstRoom, secondRoom, thirdRoom]);
+
+      firstRoom.nextRoomId = secondRoom.id;
+      secondRoom.previousRoomId = firstRoom.id;
+      secondRoom.nextRoomId = thirdRoom.id;
+      thirdRoom.previousRoomId = secondRoom.id;
+
+      await em.save([firstRoom, secondRoom, thirdRoom]);
+
+      // when
+      await memoRoomService.delete({ user, memoRoomId: secondRoom.id });
+
+      // then
+      const memoRooms = await em.findBy(MemoRoom, { user: { id: user.id } });
+      expect(memoRooms).toHaveLength(3);
+
+      const savedFirstRoom = memoRooms.find((v) => v.id === firstRoom.id);
+      const savedSecondRoom = memoRooms.find((v) => v.id === secondRoom.id);
+      const savedThirdRoom = memoRooms.find((v) => v.id === thirdRoom.id);
+
+      expect(savedSecondRoom).toMatchObject({
+        id: secondRoom.id,
+        name: secondRoom.name,
+        deletedAt: expect.any(Date),
+        previousRoomId: null,
+        nextRoomId: null,
+      });
+      expect(savedFirstRoom).toMatchObject({
+        id: firstRoom.id,
+        name: firstRoom.name,
+        deletedAt: null,
+        previousRoomId: null,
+        nextRoomId: thirdRoom.id,
+      });
+      expect(savedThirdRoom).toMatchObject({
+        id: thirdRoom.id,
+        name: thirdRoom.name,
+        deletedAt: null,
+        previousRoomId: firstRoom.id,
+        nextRoomId: null,
+      });
+    });
+  });
 });

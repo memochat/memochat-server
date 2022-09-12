@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MemoRoom } from './memo-room.entity';
-import { DataSource, FindManyOptions, FindOneOptions, FindOptionsWhere, IsNull, Repository } from 'typeorm';
+import { DataSource, FindManyOptions, FindOneOptions, FindOptionsWhere, IsNull, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class MemoRoomRepository extends Repository<MemoRoom> {
@@ -9,7 +9,7 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
   }
 
   findFirstRoomByUserId(userId: number) {
-    return this.findOne({
+    return this.findOneExludeDeletedRow({
       where: { user: { id: userId }, previousRoomId: IsNull() },
       relations: { nextRoom: true },
     });
@@ -29,5 +29,38 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
 
   findExcludeDeletedRows(options: FindManyOptions<MemoRoom> = {}): Promise<MemoRoom[]> {
     return this.find({ ...options, where: { ...options.where, deletedAt: IsNull() } });
+  }
+
+  deleteBy(memoRoom: MemoRoom) {
+    return this.dataSource.transaction(async (em) => {
+      if (memoRoom.nextRoomId) {
+        await em.update(MemoRoom, { id: memoRoom.nextRoomId }, { previousRoomId: memoRoom.previousRoomId });
+      }
+
+      if (memoRoom.previousRoomId) {
+        await em.update(MemoRoom, { id: memoRoom.previousRoomId }, { nextRoomId: memoRoom.nextRoomId });
+      }
+
+      memoRoom.remove();
+      await em.save(memoRoom);
+    });
+  }
+
+  async softDelete(criteria: FindOptionsWhere<MemoRoom>): Promise<UpdateResult> {
+    const memoRoom = await this.findOneBy(criteria);
+    if (!memoRoom) return;
+
+    await this.dataSource.transaction(async (em) => {
+      if (memoRoom.nextRoomId) {
+        await em.update(MemoRoom, { id: memoRoom.nextRoomId }, { previousRoomId: memoRoom.previousRoomId });
+      }
+
+      if (memoRoom.previousRoomId) {
+        await em.update(MemoRoom, { id: memoRoom.previousRoomId }, { nextRoomId: memoRoom.nextRoomId });
+      }
+
+      memoRoom.remove();
+      await em.save(memoRoom);
+    });
   }
 }
