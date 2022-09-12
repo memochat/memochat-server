@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { MemoRoomModule } from './app/memo-room/memo-room.module';
 import { AuthModule } from './app/auth/auth.module';
 import { ImageModule } from './app/image/image.module';
 import { UserModule } from './app/user/user.module';
@@ -17,7 +18,7 @@ export const setSwagger = (app: INestApplication) => {
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
-    include: [AuthModule, UserModule, ImageModule],
+    include: [AuthModule, UserModule, ImageModule, MemoRoomModule],
     extraModels: [ResponseEntity],
   });
 
@@ -33,6 +34,7 @@ export const setSwagger = (app: INestApplication) => {
 
         return result;
       },
+      persistAuthorization: true,
     },
   });
 };

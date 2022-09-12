@@ -7,10 +7,11 @@ import { JwtAuthModule } from './common/modules/jwt-auth/jwt-auth.module';
 import { AppConfigService } from './common/config/app/config.service';
 import { ApiSuccessLoggerMiddleware } from './common/middlewares/api-success-logger.middleware';
 import { ApiErrorLoggerMiddleware } from './common/middlewares/api-error-logger.middleware';
+import { MemoRoomModule } from './app/memo-room/memo-room.module';
 import { ImageModule } from './app/image/image.module';
 
 @Module({
-  imports: [AppConfigModule, DatabaseModule, JwtAuthModule, UserModule, AuthModule, ImageModule],
+  imports: [AppConfigModule, DatabaseModule, JwtAuthModule, UserModule, AuthModule, ImageModule, MemoRoomModule],
   controllers: [],
   providers: [],
 })
