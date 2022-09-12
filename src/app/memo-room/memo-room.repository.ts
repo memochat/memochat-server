@@ -14,4 +14,8 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
       relations: { nextRoom: true },
     });
   }
+
+  countByUserId(userId: number) {
+    return this.countBy({ user: { id: userId }, deletedAt: IsNull() });
+  }
 }
