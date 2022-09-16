@@ -73,7 +73,7 @@ export class MemoRoomService {
 
   async gets({ user }: { user: User }) {
     const memoRooms = await this.memoRoomRepository.getAllMemoRoomsWithRecursiveByUserId(user.id);
-    console.log(memoRooms);
+
     return memoRooms;
   }
 

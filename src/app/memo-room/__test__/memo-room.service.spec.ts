@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { S3Module } from '../../../common/modules/s3/s3.module';
 import { DataSource, EntityManager } from 'typeorm';
 import { DatabaseModule } from '../../../common/config/database/database.module';
 import { RoomTypeNotFoundException } from '../../../common/exceptions/room-type-not-found.exception';
@@ -20,7 +21,7 @@ describe('Memo Room Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [DatabaseModule],
+      imports: [DatabaseModule, S3Module],
       providers: [MemoRoomRepository, RoomTypeRepository, MemoRoomService],
     }).compile();
 
