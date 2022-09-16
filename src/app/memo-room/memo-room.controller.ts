@@ -16,11 +16,13 @@ import { UpdateMemoRoomRequest } from './dto/update-memo-room-request.dto';
 import { MemoRoomNotFoundException } from '../../common/exceptions/memoroom-not-found.exception';
 import { MemoRoomDto } from './dto/memo-room.dto';
 import { RoomTypeDto } from './dto/room-type.dto';
+import { UpdateMemoRoomOrederRequest } from 'src/app/memo-room/dto/update-memo-room-order-request.dto';
+import { S3Service } from '../../common/modules/s3/s3.service';
 
 @Controller('/memo-rooms')
 @ApiTags('MemoRoom')
 export class MemoRoomController {
-  constructor(private readonly memoRoomService: MemoRoomService) {}
+  constructor(private readonly memoRoomService: MemoRoomService, private readonly s3Service: S3Service) {}
 
   @Post('/')
   @Auth()
@@ -50,7 +52,12 @@ export class MemoRoomController {
   async getCategories() {
     const categories = await this.memoRoomService.getCategories();
 
-    return ResponseEntity.OK_WITH_DATA(categories.map((category) => RoomTypeDto.of(category)));
+    return ResponseEntity.OK_WITH_DATA(
+      categories.map((category) => {
+        category.thumbnail = this.s3Service.presignForGet(category.thumbnail);
+        return RoomTypeDto.of(category);
+      }),
+    );
   }
 
   @Get('/')
@@ -59,7 +66,12 @@ export class MemoRoomController {
   async gets(@CurrentUser() user: User) {
     const memoRooms = await this.memoRoomService.gets({ user });
 
-    return ResponseEntity.OK_WITH_DATA(memoRooms.map((memoRoom) => MemoRoomDto.of(memoRoom)));
+    return ResponseEntity.OK_WITH_DATA(
+      memoRooms.map((memoRoom) => {
+        memoRoom.roomType.thumbnail = this.s3Service.presignForGet(memoRoom.roomType.thumbnail);
+        return MemoRoomDto.of(memoRoom);
+      }),
+    );
   }
 
   @Get('/:id')
@@ -69,7 +81,21 @@ export class MemoRoomController {
   async get(@CurrentUser() user: User, @Param('id', ParseIntPipe) memoRoomId: number) {
     const memoRoom = await this.memoRoomService.get({ user, memoRoomId });
 
+    memoRoom.roomType.thumbnail = this.s3Service.presignForGet(memoRoom.roomType.thumbnail);
+
     return ResponseEntity.OK_WITH_DATA(MemoRoomDto.of(memoRoom));
+  }
+
+  @Put('/:id/order')
+  @Auth()
+  @ApiSuccessResponse(HttpStatus.NO_CONTENT)
+  @ApiErrorResponse(MemoRoomNotFoundException)
+  async updateOrder(
+    @CurrentUser() user: User,
+    @Param('id', ParseIntPipe) memoRoomId: number,
+    @Body() body: UpdateMemoRoomOrederRequest,
+  ) {
+    await this.memoRoomService.updateOrder({ user, memoRoomId, previousMemoRoomId: body.previousMemoRoomId });
   }
 
   @Delete('/:id')

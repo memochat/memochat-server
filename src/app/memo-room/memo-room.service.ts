@@ -20,7 +20,7 @@ export class MemoRoomService {
       throw new RoomTypeNotFoundException();
     }
 
-    const roomCount = await this.memoRoomRepository.countBy({ user: { id: user.id } });
+    const roomCount = await this.memoRoomRepository.countByUserId(user.id);
     if (roomCount >= MemoRoom.MAX_ROOM_COUNT) {
       throw new TooManyMemoRoomsException(`최대 ${MemoRoom.MAX_ROOM_COUNT}개의 룸만 만들 수 있습니다.`);
     }
@@ -30,7 +30,16 @@ export class MemoRoomService {
     memoRoom.name = name;
     memoRoom.roomType = roomType;
 
-    await this.memoRoomRepository.save(memoRoom);
+    const firstRoom = await this.memoRoomRepository.findFirstRoomByUserId(user.id);
+
+    if (!firstRoom) {
+      return await this.memoRoomRepository.save(memoRoom);
+    }
+
+    memoRoom.nextRoom = firstRoom;
+    firstRoom.previousRoom = memoRoom;
+
+    await this.memoRoomRepository.save([memoRoom, firstRoom]);
 
     return memoRoom;
   }
@@ -46,7 +55,7 @@ export class MemoRoomService {
     name: string;
     roomTypeId: number;
   }) {
-    const memoRoom = await this.memoRoomRepository.findOneBy({ user: { id: user.id }, id: memoRoomId });
+    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: memoRoomId });
     if (!memoRoom) {
       throw new MemoRoomNotFoundException();
     }
@@ -63,14 +72,13 @@ export class MemoRoomService {
   }
 
   async gets({ user }: { user: User }) {
-    //TODO: 첫번째 채팅 + 최근 순 정렬 필요 + 썸네일 presign 필요
-    const memoRooms = await this.memoRoomRepository.find({ where: { user: { id: user.id } } });
+    const memoRooms = await this.memoRoomRepository.getAllMemoRoomsWithRecursiveByUserId(user.id);
 
     return memoRooms;
   }
 
   async get({ user, memoRoomId }: { user: User; memoRoomId: number }) {
-    const memoRoom = await this.memoRoomRepository.findOneBy({ user: { id: user.id }, id: memoRoomId });
+    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: memoRoomId });
     if (!memoRoom) {
       throw new MemoRoomNotFoundException();
     }
@@ -84,5 +92,37 @@ export class MemoRoomService {
 
   async delete({ user, memoRoomId }: { user: User; memoRoomId: number }) {
     await this.memoRoomRepository.softDelete({ id: memoRoomId, user: { id: user.id } });
+  }
+
+  async updateOrder({
+    user,
+    memoRoomId,
+    previousMemoRoomId,
+  }: {
+    user: User;
+    memoRoomId: number;
+    previousMemoRoomId: number;
+  }) {
+    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: memoRoomId });
+    if (!memoRoom) {
+      throw new MemoRoomNotFoundException();
+    }
+
+    if (memoRoom.previousRoomId === previousMemoRoomId) return;
+
+    const previousMemoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({
+      user: { id: user.id },
+      id: previousMemoRoomId,
+    });
+
+    if (previousMemoRoomId > 0 && !previousMemoRoom) {
+      throw new MemoRoomNotFoundException();
+    }
+
+    await this.memoRoomRepository.updateOrder({
+      user,
+      memoRoom,
+      previousMemoRoom,
+    });
   }
 }
