@@ -22,7 +22,8 @@
     "test:unit": "jest --testPathPattern=.*\\.unit\\.spec.\\ts$",
     "db:up": "docker-compose -f docker-compose.development-db.yml up -d",
     "db:down": "docker-compose -f docker-compose.$npm_config_env-db.yml down",
-    "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build"
+    "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build",
+    "docker:local": ". ./local-setup.sh"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
