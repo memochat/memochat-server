@@ -1,5 +1,11 @@
 # NestJS-MySQL-TypeORM-Boilerplate
 
+## 로컬 docker 실행 방법
+
+1. yarn install
+2. env 파일 추가 - 따로 전달해드릴게요! (.env.development 로 저장)
+3. yarn docker:local
+
 ## 주요 패키지
 
 - 클래스 변환
