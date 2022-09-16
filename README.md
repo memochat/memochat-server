@@ -7,6 +7,8 @@
 3. `yarn docker:local-up` postgres 컨테이너, 서버 컨테이너 실행
 4. `yarn docker:local-down` 서버 컨테이너, postgres 컨테이너 제거
 
+실행 후 `localhost:3000/v1/docs` 에서 명세확인하실 수 있어요.
+
 ## 주요 패키지
 
 - 클래스 변환
