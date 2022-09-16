@@ -73,7 +73,7 @@ export class MemoRoomService {
 
   async gets({ user }: { user: User }) {
     const memoRooms = await this.memoRoomRepository.getAllMemoRoomsWithRecursiveByUserId(user.id);
-
+    console.log(memoRooms);
     return memoRooms;
   }
 
@@ -92,5 +92,37 @@ export class MemoRoomService {
 
   async delete({ user, memoRoomId }: { user: User; memoRoomId: number }) {
     await this.memoRoomRepository.softDelete({ id: memoRoomId, user: { id: user.id } });
+  }
+
+  async updateOrder({
+    user,
+    memoRoomId,
+    previousMemoRoomId,
+  }: {
+    user: User;
+    memoRoomId: number;
+    previousMemoRoomId: number;
+  }) {
+    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: memoRoomId });
+    if (!memoRoom) {
+      throw new MemoRoomNotFoundException();
+    }
+
+    if (memoRoom.previousRoomId === previousMemoRoomId) return;
+
+    const previousMemoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({
+      user: { id: user.id },
+      id: previousMemoRoomId,
+    });
+
+    if (previousMemoRoomId > 0 && !previousMemoRoom) {
+      throw new MemoRoomNotFoundException();
+    }
+
+    await this.memoRoomRepository.updateOrder({
+      user,
+      memoRoom,
+      previousMemoRoom,
+    });
   }
 }

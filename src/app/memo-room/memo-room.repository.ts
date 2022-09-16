@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { MemoRoom } from './memo-room.entity';
 import { DataSource, FindManyOptions, FindOneOptions, FindOptionsWhere, IsNull, Repository, UpdateResult } from 'typeorm';
-import { MemoRoomCategory } from 'src/app/memo-room/type/memo-room-category';
+import { MemoRoomCategory } from './type/memo-room-category';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class MemoRoomRepository extends Repository<MemoRoom> {
@@ -77,7 +78,49 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
           category: MemoRoomCategory.find(result.room_type_category),
           thumbnail: result.room_type_thumbnail,
         },
+        previousRoomId: result.prev_room_id,
+        nextRoomId: result.next_room_id,
       })),
     );
+  }
+
+  async updateOrder({
+    user,
+    memoRoom,
+    previousMemoRoom,
+  }: {
+    user: User;
+    memoRoom: MemoRoom;
+    previousMemoRoom: MemoRoom | null;
+  }) {
+    await this.dataSource.transaction(async (em) => {
+      if (memoRoom.previousRoomId) {
+        await em.update(MemoRoom, { id: memoRoom.previousRoomId }, { nextRoomId: memoRoom.nextRoomId });
+      }
+
+      if (memoRoom.nextRoomId) {
+        await em.update(MemoRoom, { id: memoRoom.nextRoomId }, { previousRoomId: memoRoom.previousRoomId });
+      }
+
+      if (!previousMemoRoom) {
+        const firstRoom = await em.findOneBy(MemoRoom, {
+          user: { id: user.id },
+          previousRoomId: IsNull(),
+          deletedAt: IsNull(),
+        });
+
+        await em.update(MemoRoom, { id: memoRoom.id }, { nextRoomId: firstRoom.id, previousRoomId: null });
+        await em.update(MemoRoom, { id: firstRoom.id }, { previousRoomId: memoRoom.id });
+        return;
+      }
+
+      await em.update(
+        MemoRoom,
+        { id: memoRoom.id },
+        { previousRoomId: previousMemoRoom.id, nextRoomId: previousMemoRoom.nextRoomId },
+      );
+      await em.update(MemoRoom, { id: previousMemoRoom.id }, { nextRoomId: memoRoom.id });
+      await em.update(MemoRoom, { id: previousMemoRoom.nextRoomId }, { previousRoomId: memoRoom.id });
+    });
   }
 }

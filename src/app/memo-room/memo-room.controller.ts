@@ -16,6 +16,7 @@ import { UpdateMemoRoomRequest } from './dto/update-memo-room-request.dto';
 import { MemoRoomNotFoundException } from '../../common/exceptions/memoroom-not-found.exception';
 import { MemoRoomDto } from './dto/memo-room.dto';
 import { RoomTypeDto } from './dto/room-type.dto';
+import { UpdateMemoRoomOrederRequest } from 'src/app/memo-room/dto/update-memo-room-order-request.dto';
 
 @Controller('/memo-rooms')
 @ApiTags('MemoRoom')
@@ -70,6 +71,18 @@ export class MemoRoomController {
     const memoRoom = await this.memoRoomService.get({ user, memoRoomId });
 
     return ResponseEntity.OK_WITH_DATA(MemoRoomDto.of(memoRoom));
+  }
+
+  @Put('/:id/order')
+  @Auth()
+  @ApiSuccessResponse(HttpStatus.NO_CONTENT)
+  @ApiErrorResponse(MemoRoomNotFoundException)
+  async updateOrder(
+    @CurrentUser() user: User,
+    @Param('id', ParseIntPipe) memoRoomId: number,
+    @Body() body: UpdateMemoRoomOrederRequest,
+  ) {
+    await this.memoRoomService.updateOrder({ user, memoRoomId, previousMemoRoomId: body.previousMemoRoomId });
   }
 
   @Delete('/:id')
