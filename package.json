@@ -21,7 +21,7 @@
     "test:e2e": "jest -i --verbose --config ./test/jest-e2e.json",
     "test:unit": "jest --testPathPattern=.*\\.unit\\.spec.\\ts$",
     "db:up": "docker-compose -f docker-compose.development-db.yml up -d",
-    "db:down": "docker-compose -f docker-compose.$npm_config_env-db.yml down",
+    "db:down": "docker-compose -f docker-compose.development-db.yml down"
     "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build",
     "docker:local-up": ". ./local-setup.sh",
     "docker:local-down": ". ./local-down.sh"

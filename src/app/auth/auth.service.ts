@@ -6,6 +6,7 @@ import { UserRepository } from '../user/user.repository';
 import { UserNotFoundException } from '../../common/exceptions/user-not-found.exception';
 import { NotMatchedPasswordException } from '../../common/exceptions/not-matched-password.exception';
 import { TokenService } from '../../common/modules/token/token.service';
+import { SignupRequestDto } from './dto/signup-request.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async signup({ email, password, nickname }: { email: string; password: string; nickname: string }) {
+  async signup({ email, password }: SignupRequestDto) {
     if (await this.userRepository.isExistEamil(email)) {
       throw new AlreadyExistEmailException();
     }
@@ -23,7 +24,7 @@ export class AuthService {
     const user = new User();
     user.email = email;
     user.password = await this.hashService.hash(password);
-    user.nickname = nickname;
+    user.nickname = user.createNickname(email);
 
     await this.userRepository.save(user);
 
