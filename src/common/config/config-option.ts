@@ -1,4 +1,4 @@
-import { Environment } from '../enviroment';
+import { Environment } from '../environment';
 
 export const getEnvFilePath = () => {
   return process.env.NODE_ENV === Environment.Test ? './.env.test' : './.env.development';
