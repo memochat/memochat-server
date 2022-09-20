@@ -41,7 +41,7 @@ describe('Auth Service Test', () => {
       const nickname = 'test';
 
       // when
-      const result = authService.signup({ email, password, nickname });
+      const result = authService.signup({ email, password });
 
       // then
       await expect(result).resolves.toMatchObject({
@@ -59,7 +59,7 @@ describe('Auth Service Test', () => {
       await userRepository.save(user);
 
       // when
-      const result = authService.signup({ email: user.email, password: 'test', nickname: 'test' });
+      const result = authService.signup({ email: user.email, password: 'test' });
 
       // then
       await expect(result).rejects.toThrow(AlreadyExistEmailException);

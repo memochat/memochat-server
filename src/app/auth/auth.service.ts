@@ -7,11 +7,17 @@ import { UserNotFoundException } from '../../common/exceptions/user-not-found.ex
 import { NotMatchedPasswordException } from '../../common/exceptions/not-matched-password.exception';
 import { TokenService } from '../../common/modules/token/token.service';
 import { SignupRequestDto } from './dto/signup-request.dto';
+import { VerifyEmailRequestDto } from './dto/verify-email-request.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Verification } from './verification.entity';
+import { Repository } from 'typeorm';
+import { VerficationNotFoundException } from 'src/common/exceptions/verification-not-found.exception';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
+    @InjectRepository(Verification) private readonly verfications: Repository<Verification>,
     private readonly hashService: HashService,
     private readonly tokenService: TokenService,
   ) {}
@@ -27,6 +33,7 @@ export class AuthService {
     user.nickname = user.createNickname(email);
 
     await this.userRepository.save(user);
+    await this.verfications.save(this.verfications.create({ user }));
 
     return user;
   }
@@ -54,5 +61,24 @@ export class AuthService {
 
     await this.tokenService.delete(foundRefreshToken);
     return tokens;
+  }
+
+  async verifyEmail({ code }: VerifyEmailRequestDto): Promise<boolean> {
+    const verification = await this.verfications.findOne({
+      where: {
+        code,
+      },
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!verification) {
+      throw new VerficationNotFoundException();
+    }
+
+    verification.user.verified = true;
+    await this.userRepository.save(verification.user);
+    return true;
   }
 }
