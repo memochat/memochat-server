@@ -1,0 +1,27 @@
+## docker-compose local 용
+
+version: '3.2'
+
+## pg-developemnt 서비스와 같은 외부네트워크 가져옴
+networks:
+  memochat-server-network:
+    driver: bridge
+    external: true
+
+services:
+  memochat-server:
+    container_name: memochat-server-local
+    ## .env.development 파일로 환경변수 셋팅
+    env_file: ./.env.development
+
+    ## 생성되는 pg-developemnt 서비스와 연결
+    environment:
+      - POSTGRES_HOSTNAME=pg-developement
+
+    command: yarn start:dev
+    ports:
+      - 3000:3000
+
+    ## pg-developemnt 서비스와 같은 네트워크 설정
+    networks:
+      - memochat-server-network

@@ -8,9 +8,11 @@ import { AppConfigService } from './common/config/app/config.service';
 import { ApiSuccessLoggerMiddleware } from './common/middlewares/api-success-logger.middleware';
 import { ApiErrorLoggerMiddleware } from './common/middlewares/api-error-logger.middleware';
 import { MailModule } from './app/mail/mail.module';
+import { MemoRoomModule } from './app/memo-room/memo-room.module';
+import { ImageModule } from './app/image/image.module';
 
 @Module({
-  imports: [AppConfigModule, DatabaseModule, JwtAuthModule, UserModule, AuthModule, MailModule],
+  imports: [AppConfigModule, DatabaseModule, JwtAuthModule, UserModule, AuthModule, MailModule, ImageModule, MemoRoomModule],
   controllers: [],
   providers: [],
 })
