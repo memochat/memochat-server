@@ -1,10 +1,9 @@
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../../common/base-entity';
 
-@ApiTags('Users')
 @Entity()
 export class User extends BaseEntity {
   @ApiProperty({ example: 'test-user@test.com', description: '로그인 시 유저가 생성한 ID 입니다.', required: true })
