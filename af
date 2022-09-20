@@ -1,0 +1,57 @@
+[33mcommit 7a1519a0f81a4965798891e43988723060aea207[m[33m ([m[1;36mHEAD -> [m[1;32mfeat/auth-verify-email[m[33m, [m[1;31morigin/feat/auth-verify-email[m[33m)[m
+Author: hshs0409 <0409hshs@gmail.com>
+Date:   Sun Aug 21 15:48:05 2022 +0900
+
+    feat: :sparkles: POST /v1/auth/verify-email 메일 인증 API 추가
+    
+    - 메일로 보내진 인증 코드를 확인하는 API
+    
+    - 인증 코드 일치 시 유저 이메일 인증 성공
+
+[33mcommit 66bb0f1653bbb572693e40fdc46e5ce9795f4c74[m
+Author: hshs0409 <0409hshs@gmail.com>
+Date:   Sun Aug 21 15:46:19 2022 +0900
+
+    feat: :truck: Rename : CannotVerifyEmail => VerficationNotFound
+    
+    Exception 이름과 Error 메시지 수정
+
+[33mcommit a420529f87e0ffba83df1c0bd0977c9d4c98abcd[m
+Author: hshs0409 <0409hshs@gmail.com>
+Date:   Sun Aug 21 15:09:30 2022 +0900
+
+    feat: :sparkles: VerifyEmail DTO, Exception, ResStatus 추가
+
+[33mcommit e304856db88f399daf42d9f478106b3555f052bb[m
+Author: hshs0409 <0409hshs@gmail.com>
+Date:   Sun Aug 21 14:57:27 2022 +0900
+
+    feat: :sparkles: verification Entity 추가
+
+[33mcommit 1c3ec7f50909832da50fc7aac6bd33d95221789e[m[33m ([m[1;31morigin/feat/user-signup[m[33m, [m[1;32mfeat/user-signup[m[33m)[m
+Author: hshs0409 <0409hshs@gmail.com>
+Date:   Sun Aug 21 11:56:14 2022 +0900
+
+    feat: :sparkles: POST /v1/auth/signup 회원가입 API 추가
+    
+    - SignupRequestDto 수정
+    - createNickname 추가
+
+[33mcommit 181e755e36b2ef74434545354004a7663209d16c[m
+Author: hshs0409 <0409hshs@gmail.com>
+Date:   Sun Aug 21 11:02:50 2022 +0900
+
+    feat: :sparkles: userEntity 추가
+    - SetSwagger Title 변경
+
+[33mcommit 63e6ce62a3c30d8914108baa1cfd1cf7ddcceebf[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: hshs0409 <0409hshs@gmail.com>
+Date:   Sat Jul 23 21:37:12 2022 +0900
+
+    docs: :memo: update readme
+
+[33mcommit a6dbd21750f05cb2ea5729becc046f3b8d07b836[m
+Author: hshs0409 <0409hshs@gmail.com>
+Date:   Sat Jul 23 21:15:58 2022 +0900
+
+    Feat backend setup

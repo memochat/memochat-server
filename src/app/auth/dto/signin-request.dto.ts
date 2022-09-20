@@ -1,18 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, Matches } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
+import { User } from 'src/app/user/user.entity';
 
-export class SigninRequestDto {
-  @ApiProperty({ example: 'test@test.com' })
-  @IsEmail()
-  @IsString()
-  @IsNotEmpty()
-  email: string;
-
-  @ApiProperty({ example: '!a123456' })
-  @Matches(/^(?=.*[a-zA-Z])((?=.*\d)(?=.*\W)).{8,16}$/, {
-    message: '비밀번호는 문자, 숫자, 특수문자가 최소 1개 이상 포함되며 8자리에서 최대 16자리 문자열입니다.',
-  })
-  @IsString()
-  @IsNotEmpty()
-  password: string;
-}
+export class SigninRequestDto extends PickType(User, ['email', 'password'] as const) {}
