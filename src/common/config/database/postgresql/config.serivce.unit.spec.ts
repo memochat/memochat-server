@@ -1,73 +1,64 @@
 import { Test } from '@nestjs/testing';
-import { MysqlConfigModule } from './config.module';
-import { MysqlConfigService } from './config.service';
+import { PostgreSQLConfigModule } from './config.module';
+import { PostgreSQLConfigService } from './config.service';
 
-describe('MySQL Config Module Test', () => {
-  let mysqlConfigService: MysqlConfigService;
+describe('Postgres Config Module Test', () => {
+  let postgreConfigService: PostgreSQLConfigService;
 
   beforeEach(async () => {
     const app = await Test.createTestingModule({
-      imports: [MysqlConfigModule],
+      imports: [PostgreSQLConfigModule],
     }).compile();
 
-    mysqlConfigService = app.get(MysqlConfigService);
+    postgreConfigService = app.get(PostgreSQLConfigService);
   });
 
-  describe('MySQL Config Service Test', () => {
-    test('MYSQL_DATABASE를 반환하는가', async () => {
+  describe('Postgre Config Service Test', () => {
+    test('POSTGRES_DB를  반환하는가', async () => {
       // given
 
       // when
-      const dbname = mysqlConfigService.dbName;
+      const dbname = postgreConfigService.dbName;
 
       // then
-      expect(dbname).toEqual(process.env.MYSQL_DATABASE);
+      expect(dbname).toEqual(process.env.POSTGRES_DB);
     });
 
-    test('MYSQL_PORT를 반환하는가', async () => {
+    test('POSTGRES_PORT를 반환하는가', async () => {
       // given
 
       // when
-      const port = mysqlConfigService.port;
+      const port = postgreConfigService.port;
 
       // then
-      expect(port).toEqual(parseInt(process.env.MYSQL_PORT, 10));
+      expect(port).toEqual(parseInt(process.env.POSTGRES_PORT, 10));
     });
-    test('MYSQL_HOSTNAME 반환하는가', async () => {
+    test('POSTGRES_HOSTNAME 반환하는가', async () => {
       // given
 
       // when
-      const hostName = mysqlConfigService.hostName;
+      const hostName = postgreConfigService.hostName;
 
       // then
-      expect(hostName).toEqual(process.env.MYSQL_HOSTNAME);
+      expect(hostName).toEqual(process.env.POSTGRES_HOSTNAME);
     });
-    test('MYSQL_USERNAME를 반환하는가', async () => {
+    test('POSTGRES_USER를 반환하는가', async () => {
       // given
 
       // when
-      const userName = mysqlConfigService.userName;
+      const userName = postgreConfigService.userName;
 
       // then
-      expect(userName).toEqual(process.env.MYSQL_USERNAME);
+      expect(userName).toEqual(process.env.POSTGRES_USER);
     });
-    test('MYSQL_PASSWORD를 반환하는가', async () => {
+    test('POSTGRES_PASSWORD를 반환하는가', async () => {
       // given
 
       // when
-      const password = mysqlConfigService.passwrod;
+      const password = postgreConfigService.password;
 
       // then
-      expect(password).toEqual(process.env.MYSQL_PASSWORD);
-    });
-    test('MYSQL_CONNECTION_TIMEOUT를 반환하는가', async () => {
-      // given
-
-      // when
-      const maxConnectionTimeout = mysqlConfigService.maxConnectionTimeout;
-
-      // then
-      expect(maxConnectionTimeout).toEqual(parseInt(process.env.MYSQL_CONNECTION_TIMEOUT, 10));
+      expect(password).toEqual(process.env.POSTGRES_PASSWORD);
     });
   });
 });

@@ -1,6 +1,6 @@
 import { Expose, plainToClass, Type } from 'class-transformer';
 import { IsEnum, IsNumber, validateSync } from 'class-validator';
-import { Environment } from '../../Enviroment';
+import { Environment } from '../../enviroment';
 
 export class AppConfig {
   @Expose()
