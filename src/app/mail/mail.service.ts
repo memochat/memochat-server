@@ -3,6 +3,7 @@ import FormData from 'form-data';
 import { Injectable } from '@nestjs/common';
 import { MailConfigService } from 'src/common/config/mail/config.service';
 import { EmailVar } from './mail.interface';
+import { EmailNotSendedException } from 'src/common/exceptions/email-not-sended.exception';
 
 @Injectable()
 export class MailService {
@@ -24,11 +25,10 @@ export class MailService {
         },
         body: form,
       });
-      console.log(response.body);
 
       return true;
     } catch (error) {
-      return false;
+      throw new EmailNotSendedException();
     }
   }
 

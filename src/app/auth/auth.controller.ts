@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiErrorResponse } from '../../common/decorators/api-error-response.decorator';
 import { ApiSuccessResponse } from '../../common/decorators/api-success-response.decorator';
