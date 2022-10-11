@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import path from 'path';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppConfigService } from '../../app/config.service';
 import { PostgreSQLConfigService } from '../postgresql/config.service';
+import path from 'path';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {

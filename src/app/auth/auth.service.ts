@@ -13,14 +13,15 @@ import { Verification } from './verification.entity';
 import { Repository } from 'typeorm';
 import { VerficationNotFoundException } from 'src/common/exceptions/verification-not-found.exception';
 import { MailService } from '../mail/mail.service';
-import { SendEmailRequestDto } from './dto/send-email.dto';
+import { EmailRequestDto } from './dto/email-request.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { EmailNotVerifiedException } from 'src/common/exceptions/email-not-verified.exception';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userRepository: UserRepository,
     @InjectRepository(Verification) private readonly verifications: Repository<Verification>,
+    private readonly userRepository: UserRepository,
     private readonly hashService: HashService,
     private readonly tokenService: TokenService,
     private readonly mailService: MailService,
@@ -37,7 +38,7 @@ export class AuthService {
     }
 
     if (verification.verified === false) {
-      throw new Error('검증되지 않은 이메일입니다.');
+      throw new EmailNotVerifiedException();
     }
 
     const user = new User();
@@ -77,12 +78,13 @@ export class AuthService {
     return tokens;
   }
 
-  async sendEmail({ email }: SendEmailRequestDto): Promise<boolean> {
+  async sendEmail({ email }: EmailRequestDto): Promise<boolean> {
     if (await this.userRepository.isExistEamil(email)) {
       throw new AlreadyExistEmailException();
     }
 
     const existedVerification = await this.verifications.findOneBy({ email });
+
     if (existedVerification) {
       existedVerification.code = uuidv4();
       await this.verifications.save(existedVerification);
@@ -94,11 +96,23 @@ export class AuthService {
     return true;
   }
 
+  async checkVerification(email: string): Promise<boolean> {
+    if (await this.userRepository.isExistEamil(email)) {
+      throw new AlreadyExistEmailException();
+    }
+
+    const existedVerification = await this.verifications.findOneBy({ email });
+    if (existedVerification?.verified === true) {
+      return true;
+    } else {
+      throw new EmailNotVerifiedException();
+    }
+  }
+
   async verifyEmail({ code }: VerifyEmailRequestDto): Promise<boolean> {
     const verification = await this.verifications.findOneBy({ code });
 
     if (!verification) {
-      // 이미 검증된 Verification에 대해 다시 Verify를 해도 문제가 없긴한데 중복 방지 처리가 필요한지??
       throw new VerficationNotFoundException();
     }
 
