@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiErrorResponse } from '../../common/decorators/api-error-response.decorator';
 import { ApiSuccessResponse } from '../../common/decorators/api-success-response.decorator';
 import { InvalidTokenException } from '../../common/exceptions/invalid-token.exception';
@@ -23,6 +23,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
+  @ApiOperation({ summary: '회원가입 API', description: '이메일 인증을 거친 후 회원가입 합니다.' })
   @ApiSuccessResponse(HttpStatus.CREATED)
   @ApiErrorResponse(AlreadyExistEmailException, VerficationNotFoundException, EmailNotVerifiedException)
   async signup(@Body() signupRequest: SignupRequestDto) {
@@ -32,6 +33,7 @@ export class AuthController {
   }
 
   @Post('/signin')
+  @ApiOperation({ summary: '로그인 API', description: '로그인 후 토큰을 발급해줍니다.' })
   @ApiSuccessResponse(HttpStatus.OK, AuthTokenDto)
   @ApiErrorResponse(UserNotFoundException, NotMatchedPasswordException)
   async signin(@Body() signinRequest: SigninRequestDto) {
@@ -41,6 +43,7 @@ export class AuthController {
   }
 
   @Post('/refresh-tokens')
+  @ApiOperation({ summary: 'refreshToken 재발급 API', description: '만료된 AccessToken을 재발급 합니다.' })
   @ApiSuccessResponse(HttpStatus.OK, AuthTokenDto)
   @ApiErrorResponse(InvalidTokenException)
   async refreshAuthToken(@Body() refreshTokensRequest: RefreshTokensRequestDto) {
@@ -50,6 +53,7 @@ export class AuthController {
   }
 
   @Post('/emails')
+  @ApiOperation({ summary: 'email 발송 API', description: '가입하지 않은 회원에 대해 이메일을 발송합니다.' })
   @ApiSuccessResponse(HttpStatus.OK)
   @ApiErrorResponse(AlreadyExistEmailException)
   async sendEmail(@Body() sendEmailRequest: EmailRequestDto) {
@@ -59,6 +63,7 @@ export class AuthController {
   }
 
   @Get('/verifications/:email')
+  @ApiOperation({ summary: 'email 검증 확인 API', description: '이메일 인증이 정상적으로 되었는지 확인합니다.' })
   @ApiSuccessResponse(HttpStatus.OK)
   @ApiErrorResponse(EmailNotVerifiedException)
   async checkVerification(@Param('email') email: string) {
@@ -68,6 +73,7 @@ export class AuthController {
   }
 
   @Post('/verify-email')
+  @ApiOperation({ summary: 'email 검증 API', description: '전송한 code로 이메일을 인증합니다.' })
   @ApiSuccessResponse(HttpStatus.OK)
   @ApiErrorResponse(VerficationNotFoundException)
   async verifyEmail(@Body() verifyEmailRequestDto: VerifyEmailRequestDto) {

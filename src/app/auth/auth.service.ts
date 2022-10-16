@@ -7,6 +7,7 @@ import { UserNotFoundException } from '../../common/exceptions/user-not-found.ex
 import { NotMatchedPasswordException } from '../../common/exceptions/not-matched-password.exception';
 import { TokenService } from '../../common/modules/token/token.service';
 import { SignupRequestDto } from './dto/signup-request.dto';
+import { SigninRequestDto } from './dto/signin-request.dto';
 import { VerifyEmailRequestDto } from './dto/verify-email-request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Verification } from './verification.entity';
@@ -53,8 +54,9 @@ export class AuthService {
     return user;
   }
 
-  async signin({ email, password }: { email: string; password: string }) {
-    const user = await this.userRepository.findOneBy({ email });
+  async signin({ email, password }: SigninRequestDto) {
+    const user = await this.userRepository.findOne({ where: { email }, select: ['id', 'email', 'password'] });
+    console.log(user);
 
     if (!user) {
       throw new UserNotFoundException();
