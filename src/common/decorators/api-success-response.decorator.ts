@@ -10,7 +10,7 @@ export function ApiSuccessResponse(status: HttpStatus, dataType: Type<any> = Str
     }
   }
 
-  Object.defineProperty(Temp, 'name', { value: `ResponseEntity<${dataType.name}>` });
+  Object.defineProperty(Temp, 'name', { value: `ResponseEntity<${dataType.name}${isArray ? 'Array' : ''}>` });
 
   return applyDecorators(
     HttpCode(status),
