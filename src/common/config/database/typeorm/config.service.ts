@@ -15,7 +15,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(connectionName?: string): TypeOrmModuleOptions | Promise<TypeOrmModuleOptions> {
     const entityPath = path.resolve(__dirname, '../../../../**/*.entity.{js,ts}');
 
-    if (this.appConfigService.isDevelopment()) {
+    if (this.appConfigService.isDevelopment() || this.appConfigService.isTest()) {
       return {
         type: 'postgres',
         name: connectionName,
