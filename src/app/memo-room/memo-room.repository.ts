@@ -63,7 +63,7 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
         FROM memo_room m join ordered_room on (m.prev_room_id = ordered_room.id)  where m.deleted_at is null
       )
       
-      select om.*, rt.category as room_category_category, rt.thumbnail as room_category_thumbnail from ordered_room om left jocategory rt on om.room_category_id = rt.id order by om.level;`,
+      select om.*, rt.name as room_category_name, rt.thumbnail as room_category_thumbnail from ordered_room om left join room_category rt on om.room_category_id = rt.id order by om.level;`,
       [userId],
     );
 
@@ -75,7 +75,7 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
         updatedAt: result.updated_at,
         roomCategory: {
           id: result.room_category_id,
-          name: MemoRoomCategory.find(result.room_category_category),
+          name: MemoRoomCategory.find(result.room_category_name),
           thumbnail: result.room_category_thumbnail,
         },
         previousRoomId: result.prev_room_id,
