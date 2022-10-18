@@ -2,18 +2,18 @@ import { Test } from '@nestjs/testing';
 import { S3Module } from '../../../common/modules/s3/s3.module';
 import { DataSource, EntityManager } from 'typeorm';
 import { DatabaseModule } from '../../../common/config/database/database.module';
-import { RoomTypeNotFoundException } from '../../../common/exceptions/room-type-not-found.exception';
+import { RoomCategoryNotFoundException } from '../../../common/exceptions/room-type-not-found.exception';
 import { TooManyMemoRoomsException } from '../../../common/exceptions/too-many-memorooms.exception';
 import { getUser } from '../../user/__test__/user.fixture';
 import { MemoRoom } from '../memo-room.entity';
 import { MemoRoomRepository } from '../memo-room.repository';
 import { MemoRoomService } from '../memo-room.service';
-import { RoomTypeRepository } from '../room-type.repository';
+import { RoomCategoryRepository } from '../room-category.repository';
 import { getMemoRoom } from './memo-room.fixture';
-import { getInitialRoomTypes } from './room-type.fixture';
+import { getInitialRoomCategories } from './room-category.fixture';
 
 describe('Memo Room Service Test', () => {
-  const roomTypes = getInitialRoomTypes();
+  const roomCategories = getInitialRoomCategories();
 
   let memoRoomService: MemoRoomService;
   let dataSource: DataSource;
@@ -22,14 +22,14 @@ describe('Memo Room Service Test', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [DatabaseModule, S3Module],
-      providers: [MemoRoomRepository, RoomTypeRepository, MemoRoomService],
+      providers: [MemoRoomRepository, RoomCategoryRepository, MemoRoomService],
     }).compile();
 
     memoRoomService = module.get(MemoRoomService);
     dataSource = module.get(DataSource);
     em = dataSource.createEntityManager();
 
-    await em.save(roomTypes);
+    await em.save(roomCategories);
   });
 
   afterEach(async () => {
@@ -44,13 +44,13 @@ describe('Memo Room Service Test', () => {
       await em.save(user);
 
       // when
-      const savedMemoRoom = await memoRoomService.create({ user, name: 'test', roomTypeId: 1 });
+      const savedMemoRoom = await memoRoomService.create({ user, name: 'test', roomCategoryId: 1 });
 
       // then
       expect(savedMemoRoom).toMatchObject({
         id: expect.any(Number),
         name: 'test',
-        roomType: roomTypes.find((roomType) => roomType.id === 1),
+        roomCategory: roomCategories.find((roomCategory) => roomCategory.id === 1),
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
       });
@@ -63,9 +63,9 @@ describe('Memo Room Service Test', () => {
       await em.save(user);
 
       // when
-      await memoRoomService.create({ user, name: 'first', roomTypeId: 1 });
-      await memoRoomService.create({ user, name: 'second', roomTypeId: 1 });
-      await memoRoomService.create({ user, name: 'third', roomTypeId: 1 });
+      await memoRoomService.create({ user, name: 'first', roomCategoryId: 1 });
+      await memoRoomService.create({ user, name: 'second', roomCategoryId: 1 });
+      await memoRoomService.create({ user, name: 'third', roomCategoryId: 1 });
 
       // then
       const memoRooms = await em.find(MemoRoom, {
@@ -86,15 +86,15 @@ describe('Memo Room Service Test', () => {
       expect(thirdMemoRoom.previousRoom).toBeNull();
     });
 
-    test('해당하는 룸타입이 존재하지 않는 경우 RoomTypeNotFoundException이 발생하는가', async () => {
+    test('해당하는 룸타입이 존재하지 않는 경우 RoomCategoryNotFoundException이 발생하는가', async () => {
       // given
       const user = getUser();
 
       // when
-      const result = memoRoomService.create({ user, name: 'test', roomTypeId: 9999 });
+      const result = memoRoomService.create({ user, name: 'test', roomCategoryId: 9999 });
 
       // then
-      expect(result).rejects.toThrowError(RoomTypeNotFoundException);
+      expect(result).rejects.toThrowError(RoomCategoryNotFoundException);
     });
 
     test('총 룸 개수가 최대 룸개수를 초과하는 경우 TooManyMemoRoomsException이 발생하는가', async () => {
@@ -103,13 +103,13 @@ describe('Memo Room Service Test', () => {
       await em.save(user);
 
       const memoRooms = Array.from({ length: MemoRoom.MAX_ROOM_COUNT }, (v, k) => k).map((v) =>
-        getMemoRoom({ user: Promise.resolve(user), roomType: roomTypes[v % roomTypes.length] }),
+        getMemoRoom({ user: Promise.resolve(user), roomCategory: roomCategories[v % roomCategories.length] }),
       );
 
       await em.save(memoRooms);
 
       // when
-      const result = memoRoomService.create({ user, name: 'test', roomTypeId: 1 });
+      const result = memoRoomService.create({ user, name: 'test', roomCategoryId: 1 });
 
       // then
       expect(result).rejects.toThrowError(TooManyMemoRoomsException);
@@ -123,9 +123,9 @@ describe('Memo Room Service Test', () => {
 
       await em.save(user);
 
-      const firstRoom = getMemoRoom({ user: Promise.resolve(user), roomType: roomTypes[0] });
-      const secondRoom = getMemoRoom({ user: Promise.resolve(user), roomType: roomTypes[0] });
-      const thirdRoom = getMemoRoom({ user: Promise.resolve(user), roomType: roomTypes[0] });
+      const firstRoom = getMemoRoom({ user: Promise.resolve(user), roomCategory: roomCategories[0] });
+      const secondRoom = getMemoRoom({ user: Promise.resolve(user), roomCategory: roomCategories[0] });
+      const thirdRoom = getMemoRoom({ user: Promise.resolve(user), roomCategory: roomCategories[0] });
 
       await em.save([firstRoom, secondRoom, thirdRoom]);
 

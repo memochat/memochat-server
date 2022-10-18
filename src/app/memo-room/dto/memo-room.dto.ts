@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MemoRoom } from '../memo-room.entity';
-import { RoomTypeDto } from './room-type.dto';
+import { RoomCategoryDto } from './room-type.dto';
 
 export class MemoRoomDto {
   @ApiProperty({ example: 1 })
@@ -9,17 +9,17 @@ export class MemoRoomDto {
   @ApiProperty({ example: '장보기목록' })
   name: string;
 
-  @ApiProperty({ type: () => RoomTypeDto })
-  roomType: RoomTypeDto;
+  @ApiProperty({ type: () => RoomCategoryDto })
+  roomCategory: RoomCategoryDto;
 
   static of(memoRoom: MemoRoom) {
     const memoRoomDto = new MemoRoomDto();
 
     memoRoomDto.id = memoRoom.id;
     memoRoomDto.name = memoRoom.name;
-    memoRoomDto.roomType = {
-      ...memoRoom.roomType,
-      category: memoRoom.roomType.category.name,
+    memoRoomDto.roomCategory = {
+      ...memoRoom.roomCategory,
+      name: memoRoom.roomCategory.name.name,
     };
 
     return memoRoomDto;

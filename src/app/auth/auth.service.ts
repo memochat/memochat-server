@@ -12,11 +12,11 @@ import { VerifyEmailRequestDto } from './dto/verify-email-request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Verification } from './verification.entity';
 import { Repository } from 'typeorm';
-import { VerficationNotFoundException } from 'src/common/exceptions/verification-not-found.exception';
+import { VerficationNotFoundException } from '../../common/exceptions/verification-not-found.exception';
 import { MailService } from '../mail/mail.service';
 import { EmailRequestDto } from './dto/email-request.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { EmailNotVerifiedException } from 'src/common/exceptions/email-not-verified.exception';
+import { EmailNotVerifiedException } from '../../common/exceptions/email-not-verified.exception';
 
 @Injectable()
 export class AuthService {

@@ -12,13 +12,13 @@ import { setNestApp } from '../src/setNsetApp';
 import { ErrorInfo } from '../src/common/exceptions/error-info';
 import { InvalidTokenException } from '../src/common/exceptions/invalid-token.exception';
 import { MemoRoom } from '../src/app/memo-room/memo-room.entity';
-import { getInitialRoomTypes } from '../src/app/memo-room/__test__/room-type.fixture';
-import { RoomTypeNotFoundException } from '../src/common/exceptions/room-type-not-found.exception';
+import { getInitialRoomCategories } from '../src/app/memo-room/__test__/room-category.fixture';
+import { RoomCategoryNotFoundException } from '../src/common/exceptions/room-type-not-found.exception';
 import { getMemoRoom } from '../src/app/memo-room/__test__/memo-room.fixture';
 import { TooManyMemoRoomsException } from '../src/common/exceptions/too-many-memorooms.exception';
 
 describe('MomoRoom E2E Test', () => {
-  const roomTypes = getInitialRoomTypes();
+  const roomCategories = getInitialRoomCategories();
   const route = '/v1/memo-rooms';
   let app: INestApplication;
   let dataSource: DataSource;
@@ -37,7 +37,7 @@ describe('MomoRoom E2E Test', () => {
 
     await app.init();
 
-    await em.save(roomTypes);
+    await em.save(roomCategories);
   });
 
   afterEach(async () => {
@@ -59,7 +59,7 @@ describe('MomoRoom E2E Test', () => {
       const res = await request(app.getHttpServer())
         .post(url)
         .set({ Authorization: accessToken.bearerForm })
-        .send({ name: 'test', roomTypeId: 1 });
+        .send({ name: 'test', roomCategoryId: 1 });
 
       // then
       expect(res.status).toEqual(HttpStatus.CREATED);
@@ -75,7 +75,7 @@ describe('MomoRoom E2E Test', () => {
       expect(memoRoom).toMatchObject({
         id: res.body.data.id,
         name: 'test',
-        roomType: roomTypes.find((roomType) => roomType.id === 1),
+        roomCategory: roomCategories.find((roomCategory) => roomCategory.id === 1),
       });
     });
 
@@ -96,7 +96,7 @@ describe('MomoRoom E2E Test', () => {
       });
     });
 
-    test('roomTypeId에 해당하는 룸 유형이 존재하지 않는 경우 404를 응답하는가', async () => {
+    test('roomCategoryId에 해당하는 룸 유형이 존재하지 않는 경우 404를 응답하는가', async () => {
       // given
       const user = getUser();
 
@@ -107,12 +107,12 @@ describe('MomoRoom E2E Test', () => {
       // when
       const res = await request(app.getHttpServer()).post(url).set({ Authorization: accessToken.bearerForm }).send({
         name: 'test',
-        roomTypeId: 999,
+        roomCategoryId: 999,
       });
 
       // then
       expect(res.status).toEqual(HttpStatus.NOT_FOUND);
-      const errorInfo = new RoomTypeNotFoundException().getResponse() as ErrorInfo<any>;
+      const errorInfo = new RoomCategoryNotFoundException().getResponse() as ErrorInfo<any>;
       expect(res.body).toMatchObject({
         status: errorInfo.errorCode,
       });
@@ -125,7 +125,7 @@ describe('MomoRoom E2E Test', () => {
       await em.save(user);
 
       const memoRooms = Array.from({ length: MemoRoom.MAX_ROOM_COUNT }, (v, k) => k).map((v) =>
-        getMemoRoom({ user: Promise.resolve(user), roomType: roomTypes[v % roomTypes.length] }),
+        getMemoRoom({ user: Promise.resolve(user), roomCategory: roomCategories[v % roomCategories.length] }),
       );
 
       await em.save(memoRooms);
@@ -135,7 +135,7 @@ describe('MomoRoom E2E Test', () => {
       // when
       const res = await request(app.getHttpServer()).post(url).set({ Authorization: accessToken.bearerForm }).send({
         name: 'test',
-        roomTypeId: 1,
+        roomCategoryId: 1,
       });
 
       // then

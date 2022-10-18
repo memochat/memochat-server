@@ -1,11 +1,11 @@
 import { Test } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
 import { DatabaseModule } from '../../../common/config/database/database.module';
-import { RoomType } from '../room-type.entity';
+import { RoomCategory } from '../room-category.entity';
 import { MemoRoomCategory } from '../type/memo-room-category';
-import { getRoomType } from './room-type.fixture';
+import { getRoomCategory } from './room-category.fixture';
 
-describe('RoomType Entity Text', () => {
+describe('RoomCategory Entity Text', () => {
   let dataSource: DataSource;
 
   beforeEach(async () => {
@@ -22,38 +22,38 @@ describe('RoomType Entity Text', () => {
 
   test('create', async () => {
     // given
-    const roomType = new RoomType();
-    roomType.category = MemoRoomCategory.STUDY;
-    roomType.thumbnail = 'test.png';
+    const roomCategory = new RoomCategory();
+    roomCategory.name = MemoRoomCategory.STUDY;
+    roomCategory.thumbnail = 'test.png';
 
     const em = dataSource.createEntityManager();
 
     // when
-    await em.save(roomType);
+    await em.save(roomCategory);
 
     // then
-    expect(roomType).toMatchObject({
+    expect(roomCategory).toMatchObject({
       id: expect.any(Number),
-      category: MemoRoomCategory.STUDY,
+      name: MemoRoomCategory.STUDY,
       thumbnail: 'test.png',
     });
   });
 
   test('read', async () => {
     // given
-    const roomType = getRoomType();
+    const roomCategory = getRoomCategory();
 
     const em = dataSource.createEntityManager();
 
     // when
-    await em.save(roomType);
+    await em.save(roomCategory);
 
     // then
-    const savedRoomType = await em.findOneBy(RoomType, { id: roomType.id });
-    expect(savedRoomType).toMatchObject({
-      id: roomType.id,
-      category: roomType.category,
-      thumbnail: roomType.thumbnail,
+    const savedRoomCategory = await em.findOneBy(RoomCategory, { id: roomCategory.id });
+    expect(savedRoomCategory).toMatchObject({
+      id: roomCategory.id,
+      name: roomCategory.name,
+      thumbnail: roomCategory.thumbnail,
     });
   });
 });

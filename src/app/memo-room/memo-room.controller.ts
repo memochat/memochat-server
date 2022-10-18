@@ -10,13 +10,13 @@ import { CreateMemoRoomRequest } from './dto/create-memo-room-request.dto';
 import { BadParameterException } from '../../common/exceptions/bad-parameter.exception';
 import { ResponseEntity } from '../../common/response/response-entity';
 import { MemoRoomId } from './dto/memo-room-id.dto';
-import { RoomTypeNotFoundException } from '../../common/exceptions/room-type-not-found.exception';
+import { RoomCategoryNotFoundException } from '../../common/exceptions/room-type-not-found.exception';
 import { TooManyMemoRoomsException } from '../../common/exceptions/too-many-memorooms.exception';
 import { UpdateMemoRoomRequest } from './dto/update-memo-room-request.dto';
 import { MemoRoomNotFoundException } from '../../common/exceptions/memoroom-not-found.exception';
 import { MemoRoomDto } from './dto/memo-room.dto';
-import { RoomTypeDto } from './dto/room-type.dto';
-import { UpdateMemoRoomOrederRequest } from 'src/app/memo-room/dto/update-memo-room-order-request.dto';
+import { RoomCategoryDto } from './dto/room-type.dto';
+import { UpdateMemoRoomOrederRequest } from '../../app/memo-room/dto/update-memo-room-order-request.dto';
 import { S3Service } from '../../common/modules/s3/s3.service';
 
 @Controller('/memo-rooms')
@@ -27,9 +27,9 @@ export class MemoRoomController {
   @Post('/')
   @Auth()
   @ApiSuccessResponse(HttpStatus.CREATED, MemoRoomId)
-  @ApiErrorResponse(BadParameterException, RoomTypeNotFoundException, TooManyMemoRoomsException)
+  @ApiErrorResponse(BadParameterException, RoomCategoryNotFoundException, TooManyMemoRoomsException)
   async create(@CurrentUser() user: User, @Body() body: CreateMemoRoomRequest) {
-    const memoRoom = await this.memoRoomService.create({ user, name: body.name, roomTypeId: body.roomTypeId });
+    const memoRoom = await this.memoRoomService.create({ user, name: body.name, roomCategoryId: body.roomCategoryId });
 
     return ResponseEntity.OK_WITH_DATA(MemoRoomId.of(memoRoom));
   }
@@ -37,25 +37,25 @@ export class MemoRoomController {
   @Put('/:memoRoomId')
   @Auth()
   @ApiSuccessResponse(HttpStatus.NO_CONTENT)
-  @ApiErrorResponse(BadParameterException, RoomTypeNotFoundException, MemoRoomNotFoundException)
+  @ApiErrorResponse(BadParameterException, RoomCategoryNotFoundException, MemoRoomNotFoundException)
   async update(
     @CurrentUser() user: User,
     @Param('memoRoomId', ParseIntPipe) memoRoomId: number,
     @Body() body: UpdateMemoRoomRequest,
   ) {
-    await this.memoRoomService.update({ user, memoRoomId, name: body.name, roomTypeId: body.roomTypeId });
+    await this.memoRoomService.update({ user, memoRoomId, name: body.name, roomCategoryId: body.roomCategoryId });
   }
 
   @Get('/categories')
   @Auth()
-  @ApiSuccessResponse(HttpStatus.OK, RoomTypeDto, { isArray: true })
+  @ApiSuccessResponse(HttpStatus.OK, RoomCategoryDto, { isArray: true })
   async getCategories() {
     const categories = await this.memoRoomService.getCategories();
 
     return ResponseEntity.OK_WITH_DATA(
       categories.map((category) => {
         category.thumbnail = this.s3Service.presignForGet(category.thumbnail);
-        return RoomTypeDto.of(category);
+        return RoomCategoryDto.of(category);
       }),
     );
   }
@@ -68,7 +68,7 @@ export class MemoRoomController {
 
     return ResponseEntity.OK_WITH_DATA(
       memoRooms.map((memoRoom) => {
-        memoRoom.roomType.thumbnail = this.s3Service.presignForGet(memoRoom.roomType.thumbnail);
+        memoRoom.roomCategory.thumbnail = this.s3Service.presignForGet(memoRoom.roomCategory.thumbnail);
         return MemoRoomDto.of(memoRoom);
       }),
     );
@@ -81,7 +81,7 @@ export class MemoRoomController {
   async get(@CurrentUser() user: User, @Param('id', ParseIntPipe) memoRoomId: number) {
     const memoRoom = await this.memoRoomService.get({ user, memoRoomId });
 
-    memoRoom.roomType.thumbnail = this.s3Service.presignForGet(memoRoom.roomType.thumbnail);
+    memoRoom.roomCategory.thumbnail = this.s3Service.presignForGet(memoRoom.roomCategory.thumbnail);
 
     return ResponseEntity.OK_WITH_DATA(MemoRoomDto.of(memoRoom));
   }

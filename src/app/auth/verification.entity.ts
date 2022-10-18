@@ -1,6 +1,6 @@
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { IsString, IsUUID } from 'class-validator';
-import { BaseEntity } from 'src/common/base-entity';
+import { BaseEntity } from '../../common/base-entity';
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 

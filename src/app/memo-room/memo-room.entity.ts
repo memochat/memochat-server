@@ -1,7 +1,7 @@
 import { BaseEntity } from '../../common/base-entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { User } from '../user/user.entity';
-import { RoomType } from './room-type.entity';
+import { RoomCategory } from './room-category.entity';
 
 @Entity({ name: 'memo_room' })
 export class MemoRoom extends BaseEntity {
@@ -14,8 +14,9 @@ export class MemoRoom extends BaseEntity {
   @Column({ type: 'varchar', length: 20 })
   name: string;
 
-  @ManyToOne(() => RoomType, { eager: true, nullable: false })
-  roomType: RoomType;
+  @ManyToOne(() => RoomCategory, { eager: true, nullable: false })
+  @JoinColumn({ name: 'room_category_id', referencedColumnName: 'id' })
+  roomCategory: RoomCategory;
 
   @Column({ type: 'timestamp', nullable: true })
   deletedAt: Date | null;

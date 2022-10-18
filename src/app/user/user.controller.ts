@@ -1,8 +1,8 @@
 import { Body, Controller, HttpStatus, Get, Patch } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiErrorResponse } from 'src/common/decorators/api-error-response.decorator';
-import { NotMatchedPasswordException } from 'src/common/exceptions/not-matched-password.exception';
-import { ResponseEntity } from 'src/common/response/response-entity';
+import { ApiErrorResponse } from '../../common/decorators/api-error-response.decorator';
+import { NotMatchedPasswordException } from '../../common/exceptions/not-matched-password.exception';
+import { ResponseEntity } from '../../common/response/response-entity';
 import { ApiSuccessResponse } from '../../common/decorators/api-success-response.decorator';
 import { Auth } from '../../common/decorators/auth.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
