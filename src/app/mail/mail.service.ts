@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import { Injectable } from '@nestjs/common';
-import { MailConfigService } from 'src/common/config/mail/config.service';
+import { MailConfigService } from '../../common/config/mail/config.service';
 import { EmailVar } from './mail.interface';
-import { EmailNotSendedException } from 'src/common/exceptions/email-not-sended.exception';
+import { EmailNotSendedException } from '../../common/exceptions/email-not-sended.exception';
 
 @Injectable()
 export class MailService {

@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RoomType } from '../room-type.entity';
+import { RoomCategory } from '../room-category.entity';
 
-export class RoomTypeDto {
+export class RoomCategoryDto {
   @ApiProperty({ example: 1, description: '룸 유형 아이디' })
   id: number;
 
   @ApiProperty({ example: 'DEFAULT', description: '룸 유형 카테고리' })
-  category: string;
+  name: string;
 
   @ApiProperty({
     example:
@@ -15,11 +15,11 @@ export class RoomTypeDto {
   })
   thumbnail: string;
 
-  static of(roomType: RoomType) {
-    const roomTypeDto = new RoomTypeDto();
-    roomTypeDto.id = roomType.id;
-    roomTypeDto.category = roomType.category.name;
-    roomTypeDto.thumbnail = roomType.thumbnail;
-    return roomTypeDto;
+  static of(roomCategory: RoomCategory) {
+    const roomCategoryDto = new RoomCategoryDto();
+    roomCategoryDto.id = roomCategory.id;
+    roomCategoryDto.name = roomCategory.name.name;
+    roomCategoryDto.thumbnail = roomCategory.thumbnail;
+    return roomCategoryDto;
   }
 }

@@ -54,16 +54,16 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
   async getAllMemoRoomsWithRecursiveByUserId(userId: number) {
     const results = await this.dataSource.query(
       `with recursive ordered_room (id) as (
-        SELECT memo_room.id,0 as level, prev_room_id, next_room_id, created_at, updated_at, name, user_id, room_type_id, deleted_at
+        SELECT memo_room.id,0 as level, prev_room_id, next_room_id, created_at, updated_at, name, user_id, room_category_id, deleted_at
         FROM memo_room where deleted_at is null and user_id = $1 and prev_room_id IS null
         
         union
         
-        SELECT m.id,ordered_room.level + 1 as level, m.prev_room_id, m.next_room_id, m.created_at, m.updated_at, m.name, m.user_id, m.room_type_id, m.deleted_at
+        SELECT m.id,ordered_room.level + 1 as level, m.prev_room_id, m.next_room_id, m.created_at, m.updated_at, m.name, m.user_id, m.room_category_id, m.deleted_at
         FROM memo_room m join ordered_room on (m.prev_room_id = ordered_room.id)  where m.deleted_at is null
       )
       
-      select om.*, rt.category as room_type_category, rt.thumbnail as room_type_thumbnail from ordered_room om left join room_type rt on om.room_type_id = rt.id order by om.level;`,
+      select om.*, rt.name as room_category_name, rt.thumbnail as room_category_thumbnail from ordered_room om left join room_category rt on om.room_category_id = rt.id order by om.level;`,
       [userId],
     );
 
@@ -73,10 +73,10 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
         name: result.name,
         createdAt: result.created_at,
         updatedAt: result.updated_at,
-        roomType: {
-          id: result.room_type_id,
-          category: MemoRoomCategory.find(result.room_type_category),
-          thumbnail: result.room_type_thumbnail,
+        roomCategory: {
+          id: result.room_category_id,
+          name: MemoRoomCategory.find(result.room_category_name),
+          thumbnail: result.room_category_thumbnail,
         },
         previousRoomId: result.prev_room_id,
         nextRoomId: result.next_room_id,

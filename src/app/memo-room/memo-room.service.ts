@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { RoomTypeNotFoundException } from '../../common/exceptions/room-type-not-found.exception';
+import { RoomCategoryNotFoundException } from '../../common/exceptions/room-type-not-found.exception';
 import { MemoRoom } from './memo-room.entity';
 import { User } from '../user/user.entity';
 import { MemoRoomRepository } from './memo-room.repository';
-import { RoomTypeRepository } from './room-type.repository';
+import { RoomCategoryRepository } from './room-category.repository';
 import { TooManyMemoRoomsException } from '../../common/exceptions/too-many-memorooms.exception';
 import { MemoRoomNotFoundException } from '../../common/exceptions/memoroom-not-found.exception';
 
@@ -11,13 +11,13 @@ import { MemoRoomNotFoundException } from '../../common/exceptions/memoroom-not-
 export class MemoRoomService {
   constructor(
     private readonly memoRoomRepository: MemoRoomRepository,
-    private readonly roomTypeRepository: RoomTypeRepository,
+    private readonly roomCategoryRepository: RoomCategoryRepository,
   ) {}
 
-  async create({ user, name, roomTypeId }: { user: User; name: string; roomTypeId: number }) {
-    const roomType = await this.roomTypeRepository.findOneBy({ id: roomTypeId });
-    if (!roomType) {
-      throw new RoomTypeNotFoundException();
+  async create({ user, name, roomCategoryId }: { user: User; name: string; roomCategoryId: number }) {
+    const roomCategory = await this.roomCategoryRepository.findOneBy({ id: roomCategoryId });
+    if (!roomCategory) {
+      throw new RoomCategoryNotFoundException();
     }
 
     const roomCount = await this.memoRoomRepository.countByUserId(user.id);
@@ -28,7 +28,7 @@ export class MemoRoomService {
     const memoRoom = new MemoRoom();
     memoRoom.setUser(user);
     memoRoom.name = name;
-    memoRoom.roomType = roomType;
+    memoRoom.roomCategory = roomCategory;
 
     const firstRoom = await this.memoRoomRepository.findFirstRoomByUserId(user.id);
 
@@ -48,25 +48,25 @@ export class MemoRoomService {
     user,
     memoRoomId,
     name,
-    roomTypeId,
+    roomCategoryId,
   }: {
     user: User;
     memoRoomId: number;
     name: string;
-    roomTypeId: number;
+    roomCategoryId: number;
   }) {
     const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: memoRoomId });
     if (!memoRoom) {
       throw new MemoRoomNotFoundException();
     }
 
-    const roomType = await this.roomTypeRepository.findOneBy({ id: roomTypeId });
-    if (!roomType) {
-      throw new RoomTypeNotFoundException();
+    const roomCategory = await this.roomCategoryRepository.findOneBy({ id: roomCategoryId });
+    if (!roomCategory) {
+      throw new RoomCategoryNotFoundException();
     }
 
     memoRoom.name = name;
-    memoRoom.roomType = roomType;
+    memoRoom.roomCategory = roomCategory;
 
     this.memoRoomRepository.save(memoRoom, { reload: false });
   }
@@ -87,7 +87,7 @@ export class MemoRoomService {
   }
 
   async getCategories() {
-    return this.roomTypeRepository.find();
+    return this.roomCategoryRepository.find();
   }
 
   async delete({ user, memoRoomId }: { user: User; memoRoomId: number }) {

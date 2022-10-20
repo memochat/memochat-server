@@ -10,5 +10,5 @@ export class UpdateMemoRoomRequest {
   @IsNumber()
   @Min(1)
   @ApiProperty({ example: 1, description: '메모룸 카테고리 아이디' })
-  roomTypeId: number;
+  roomCategoryId: number;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { NotMatchedPasswordException } from 'src/common/exceptions/not-matched-password.exception';
+import { NotMatchedPasswordException } from '../../common/exceptions/not-matched-password.exception';
 import { HashService } from '../auth/hash.service';
 import { PasswordRequestDto } from './dto/password-request.dto';
 import { PatchNicknameRequestDto } from './dto/patch-nickname-request.dto';
