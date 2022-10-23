@@ -89,6 +89,7 @@ export class AuthService {
 
     if (existedVerification) {
       existedVerification.code = uuidv4();
+
       await this.verifications.save(existedVerification);
       this.mailService.sendVerificationEmail(email, existedVerification.code);
     } else {
@@ -111,7 +112,7 @@ export class AuthService {
     }
   }
 
-  async verifyEmail({ code }: VerifyEmailRequestDto): Promise<boolean> {
+  async verifyEmail({ code }: VerifyEmailRequestDto) {
     const verification = await this.verifications.findOneBy({ code });
 
     if (!verification) {
