@@ -5,7 +5,6 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "type": "module",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -13,7 +12,7 @@
     "start": "nest start",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node ./src/main.ts",
+    "start:prod": "node ./src/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest -i --verbose",
     "test:watch": "jest --watch",
