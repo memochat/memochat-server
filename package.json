@@ -41,12 +41,14 @@
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
+    "cross-env": "^7.0.3",
     "form-data": "^4.0.0",
     "mime-types": "^2.1.35",
     "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
     "node-fetch": "2",
+    "npm": "^9.3.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.3",
@@ -57,8 +59,7 @@
     "ts-jenum": "^2.2.2",
     "typeorm": "^0.3.7",
     "typeorm-naming-strategies": "^4.1.0",
-    "uuid": "^8.3.2",
-    "cross-env": "^7.0.3"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.3.0",
