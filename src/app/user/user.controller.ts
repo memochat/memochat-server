@@ -10,6 +10,7 @@ import { PasswordRequestDto } from './dto/password-request.dto';
 import { PatchNicknameRequestDto } from './dto/patch-nickname-request.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
+import heapdump from 'heapdump';
 
 @Controller('/users')
 @ApiTags('Users')
@@ -22,6 +23,13 @@ export class UserController {
   @ApiSuccessResponse(HttpStatus.OK, User)
   async me(@CurrentUser() user: User) {
     return ResponseEntity.OK_WITH_DATA(user);
+  }
+
+  @Get('/heapdump')
+  async heapdump() {
+    var filename = 'C:/Users/hyunse/' + Date.now() + '.heapsnapshot';
+    heapdump.writeSnapshot(filename);
+    return 'Heapdump has been generated in ' + filename;
   }
 
   @Patch('/nickname')
