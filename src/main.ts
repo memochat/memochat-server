@@ -12,7 +12,7 @@ async function bootstrap() {
   setNestApp(app);
 
   const appConfigService = app.get(AppConfigService);
-  await app.listen(appConfigService.port);
+  await app.listen(appConfigService.port || 3000);
 }
 
 bootstrap();
