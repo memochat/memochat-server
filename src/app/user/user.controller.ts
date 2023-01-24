@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Get, Patch } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Get, Patch, Delete, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiErrorResponse } from '../../common/decorators/api-error-response.decorator';
 import { NotMatchedPasswordException } from '../../common/exceptions/not-matched-password.exception';
@@ -10,6 +10,7 @@ import { PasswordRequestDto } from './dto/password-request.dto';
 import { PatchNicknameRequestDto } from './dto/patch-nickname-request.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
+import { UserNotFoundException } from 'src/common/exceptions/user-not-found.exception';
 
 @Controller('/users')
 @ApiTags('Users')
@@ -50,6 +51,26 @@ export class UserController {
   @ApiErrorResponse(NotMatchedPasswordException)
   async changePassword(@CurrentUser() user: User, @Body() passwordRequestDto: PasswordRequestDto) {
     await this.userService.changePassword(user, passwordRequestDto);
+    return ResponseEntity.OK();
+  }
+
+  @Delete('/')
+  @Auth()
+  @ApiOperation({ summary: '계정 삭제 API', description: '유저의 계정을 삭제합니다.' })
+  @ApiSuccessResponse(HttpStatus.NO_CONTENT)
+  @ApiErrorResponse(UserNotFoundException)
+  async deleteUser(@CurrentUser() user: User) {
+    await this.userService.deleteUser(user);
+    return ResponseEntity.OK();
+  }
+
+  @Post('/memo')
+  @Auth()
+  @ApiOperation({ summary: '메모 생성 API', description: '메타데이터 Test' })
+  @ApiSuccessResponse(HttpStatus.CREATED)
+  @ApiErrorResponse(UserNotFoundException)
+  async createMemochat(@CurrentUser() user: User, @Body('url') memochatRequestDto: string) {
+    await this.userService.createMemochat(user, memochatRequestDto);
     return ResponseEntity.OK();
   }
 }

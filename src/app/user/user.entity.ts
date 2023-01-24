@@ -7,7 +7,7 @@ import { BaseEntity } from '../../common/base-entity';
 @Entity()
 export class User extends BaseEntity {
   @ApiProperty({ example: 'test-user@test.com', description: '로그인 시 유저가 생성한 ID 입니다.', required: true })
-  @Column()
+  @Column({ unique: true })
   @IsEmail()
   @Transform((params) => params.value.trim())
   @MaxLength(25)

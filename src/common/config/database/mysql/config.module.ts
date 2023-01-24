@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { getEnvFilePath, isIgnoredEnvFile } from '../../config-option';
-import { PostgreSQLConfigService } from './config.service';
+import { MySQLConfigService } from './config.service';
 import { validate } from './validate';
 
 @Module({
@@ -12,7 +12,7 @@ import { validate } from './validate';
       validate,
     }),
   ],
-  providers: [PostgreSQLConfigService],
-  exports: [PostgreSQLConfigService],
+  providers: [MySQLConfigService],
+  exports: [MySQLConfigService],
 })
-export class PostgreSQLConfigModule {}
+export class MySQLConfigModule {}

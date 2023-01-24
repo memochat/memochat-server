@@ -1,31 +1,31 @@
 import { Expose, plainToClass } from 'class-transformer';
 import { IsNumber, IsString, validateSync } from 'class-validator';
 
-export class PostgreSQLConfig {
+export class MySQLConfig {
   @Expose()
   @IsString()
-  POSTGRES_HOSTNAME: string;
+  MYSQL_HOSTNAME: string;
 
   @Expose()
   @IsString()
-  POSTGRES_USER: string;
+  MYSQL_USER: string;
 
   @Expose()
   @IsString()
-  POSTGRES_PASSWORD: string;
+  MYSQL_PASSWORD: string;
 
   @Expose()
   @IsNumber()
-  POSTGRES_PORT: number;
+  MYSQL_PORT: number;
 
   @Expose()
   @IsString()
-  POSTGRES_DB: string;
+  MYSQL_DB: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {
   const validatedConfig = plainToClass(
-    PostgreSQLConfig,
+    MySQLConfig,
     { ...config },
     { enableImplicitConversion: true, excludeExtraneousValues: true },
   );
