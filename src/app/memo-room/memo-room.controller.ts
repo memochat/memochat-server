@@ -52,9 +52,11 @@ export class MemoRoomController {
   async getCategories() {
     const categories = await this.memoRoomService.getCategories();
 
+    console.log(categories);
+
     return ResponseEntity.OK_WITH_DATA(
       categories.map((category) => {
-        category.thumbnail = this.s3Service.presignForGet(category.thumbnail);
+        // category.thumbnail = this.s3Service.presignForGet(category.thumbnail);
         return RoomCategoryDto.of(category);
       }),
     );

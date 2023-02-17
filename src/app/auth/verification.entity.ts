@@ -1,10 +1,9 @@
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { IsString, IsUUID } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 import { BaseEntity } from '../../common/base-entity';
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-@ApiTags('Verifications')
 @Entity()
 export class Verification extends BaseEntity {
   @ApiProperty({
@@ -13,6 +12,7 @@ export class Verification extends BaseEntity {
     required: true,
   })
   @Column()
+  @IsString()
   code: string;
 
   @ApiProperty({

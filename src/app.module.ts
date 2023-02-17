@@ -10,9 +10,20 @@ import { ApiErrorLoggerMiddleware } from './common/middlewares/api-error-logger.
 import { MailModule } from './app/mail/mail.module';
 import { MemoRoomModule } from './app/memo-room/memo-room.module';
 import { ImageModule } from './app/image/image.module';
+import { MemoChatModule } from './app/memo-chat/memo-chat.module';
 
 @Module({
-  imports: [AppConfigModule, DatabaseModule, JwtAuthModule, UserModule, AuthModule, MailModule, ImageModule, MemoRoomModule],
+  imports: [
+    AppConfigModule,
+    DatabaseModule,
+    JwtAuthModule,
+    UserModule,
+    AuthModule,
+    MailModule,
+    ImageModule,
+    MemoRoomModule,
+    MemoChatModule,
+  ],
   controllers: [],
   providers: [],
 })

@@ -12,10 +12,11 @@ import { ResponseEntity } from '../../common/response/response-entity';
 import { AuthService } from './auth.service';
 import { AuthTokenDto } from './dto/auth-token.dto';
 import { RefreshTokensRequestDto } from './dto/refresh-tokens-request.dto';
-import { VerifyEmailRequestDto } from './dto/verify-email-request.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 import { EmailRequestDto } from './dto/email-request.dto';
 import { SigninRequestDto } from './dto/signin-request.dto';
 import { SignupRequestDto } from './dto/signup-request.dto';
+import { Query } from '@nestjs/common/decorators';
 
 @Controller('/auth')
 @ApiTags('Auth')
@@ -72,12 +73,12 @@ export class AuthController {
     return ResponseEntity.OK();
   }
 
-  @Post('/verify-email')
+  @Get('/verify-email')
   @ApiOperation({ summary: 'email 검증 API', description: '전송한 code로 이메일을 인증합니다.' })
   @ApiSuccessResponse(HttpStatus.OK)
   @ApiErrorResponse(VerficationNotFoundException)
-  async verifyEmail(@Body() verifyEmailRequestDto: VerifyEmailRequestDto) {
-    await this.authService.verifyEmail(verifyEmailRequestDto);
+  async verifyEmail(@Query() verifyEmailDto: VerifyEmailDto) {
+    await this.authService.verifyEmail(verifyEmailDto);
 
     return ResponseEntity.OK();
   }
