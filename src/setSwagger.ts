@@ -7,6 +7,7 @@ import { ImageModule } from './app/image/image.module';
 import { UserModule } from './app/user/user.module';
 import { AppConfigService } from './common/config/app/config.service';
 import { ResponseEntity } from './common/response/response-entity';
+import { MemoChatModule } from './app/memo-chat/memo-chat.module';
 
 export const setSwagger = (app: INestApplication) => {
   const appConfigService = app.get(AppConfigService);
@@ -19,7 +20,7 @@ export const setSwagger = (app: INestApplication) => {
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
-    include: [AuthModule, UserModule, MailModule, ImageModule, MemoRoomModule],
+    include: [AuthModule, UserModule, MailModule, ImageModule, MemoRoomModule, MemoChatModule],
     extraModels: [ResponseEntity],
   });
 

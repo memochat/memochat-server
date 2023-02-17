@@ -8,7 +8,7 @@ import { NotMatchedPasswordException } from '../../common/exceptions/not-matched
 import { TokenService } from '../../common/modules/token/token.service';
 import { SignupRequestDto } from './dto/signup-request.dto';
 import { SigninRequestDto } from './dto/signin-request.dto';
-import { VerifyEmailRequestDto } from './dto/verify-email-request.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Verification } from './verification.entity';
 import { Repository } from 'typeorm';
@@ -111,7 +111,7 @@ export class AuthService {
     }
   }
 
-  async verifyEmail({ code }: VerifyEmailRequestDto): Promise<boolean> {
+  async verifyEmail({ code }: VerifyEmailDto) {
     const verification = await this.verifications.findOneBy({ code });
 
     if (!verification) {

@@ -20,6 +20,7 @@ export function setNestApp(app: INestApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      transformOptions: { enableImplicitConversion: true },
       exceptionFactory: (validationErrors: ValidationError[] = []) => {
         return new BadParameterException(Object.values(validationErrors[0].constraints).join(', '));
       },
