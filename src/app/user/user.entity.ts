@@ -3,6 +3,8 @@ import { Transform } from 'class-transformer';
 import { IsBoolean, IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../../common/base-entity';
+import { ThumbnailColor, UserThumbnail } from './type/user-thumbnail';
+import * as mathjs from 'mathjs';
 
 @Entity()
 export class User extends BaseEntity {
@@ -35,7 +37,7 @@ export class User extends BaseEntity {
   nickname: string;
 
   @ApiProperty({ example: 'thumbnail s3 url', description: 'User Profile Image' })
-  @Column({ default: '기본 프로필 url' })
+  @Column()
   @IsString()
   @Transform((params) => params.value.trim())
   @IsNotEmpty()
@@ -52,5 +54,12 @@ export class User extends BaseEntity {
 
   updateNickname(nickname: string) {
     this.nickname = nickname;
+  }
+
+  createThumbnail(): string {
+    const randnum = mathjs.randomInt(16);
+    return `https://memochat-public.s3.ap-northeast-2.amazonaws.com/users/memochat_person_${ThumbnailColor[
+      randnum % 4
+    ].toLowerCase()}.png`;
   }
 }

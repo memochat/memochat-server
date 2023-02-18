@@ -19,6 +19,6 @@ export class MemoChatCategory extends EnumType<MemoChatCategory>() {
   }
 
   equals(v: MemoChatCategory): boolean {
-    return this.name === v.name;
+    return this.name === v + '';
   }
 }

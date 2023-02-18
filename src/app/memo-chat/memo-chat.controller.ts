@@ -1,4 +1,6 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Param } from '@nestjs/common/decorators';
+import { ParseIntPipe } from '@nestjs/common/pipes';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiErrorResponse } from 'src/common/decorators/api-error-response.decorator';
 import { ApiSuccessResponse } from 'src/common/decorators/api-success-response.decorator';
@@ -7,32 +9,31 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { BadParameterException } from 'src/common/exceptions/bad-parameter.exception';
 import { S3Service } from 'src/common/modules/s3/s3.service';
 import { ResponseEntity } from 'src/common/response/response-entity';
-import { MemoRoomId } from '../memo-room/dto/memo-room-id.dto';
 import { User } from '../user/user.entity';
 import { CreateMemoChatDto } from './dto/create-memochat.dto';
+import { MemoChat } from './memo-chat.entity';
 import { MemoChatService } from './memo-chat.service';
 
-@Controller('/memo-chats')
+@Controller('/rooms')
 @ApiTags('MemoChat')
 export class MemoChatController {
   constructor(private readonly memoChatService: MemoChatService, private readonly s3Service: S3Service) {}
 
-  @Post('/')
+  @Post('/:roomId/chats')
   @Auth()
-  @ApiSuccessResponse(HttpStatus.CREATED, MemoRoomId)
+  @ApiSuccessResponse(HttpStatus.CREATED, MemoChat)
   @ApiErrorResponse(BadParameterException)
-  async create(@CurrentUser() user: User, @Body() body: CreateMemoChatDto) {
-    const memoChat = await this.memoChatService.create({ user, body });
+  async create(@CurrentUser() user: User, @Param('roomId', ParseIntPipe) roomId: number, @Body() body: CreateMemoChatDto) {
+    const memoChat = await this.memoChatService.create({ user, roomId, body });
 
     return ResponseEntity.OK_WITH_DATA(memoChat);
   }
 
-  // metaData TEST URL
-  // @Post('/metadata')
-  // @Auth()
-  // async getMetadata(@Body() body) {
-  //   const metaData = await this.memoChatService.getMetadata(body);
+  /*
+  POST rooms/:id/chats
+  PUT rooms/:id/chats/:id
+  DELETE rooms/:id/chats/:chat_id
 
-  //   return ResponseEntity.OK_WITH_DATA(metaData);
-  // }
+  메모챗 조회, 수정, 삭제
+  */
 }

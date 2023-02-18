@@ -1,15 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
-import { MemoChatCategory } from '../type/memo-chat-category';
+import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateMemoChatDto {
-  @IsNumber()
-  @ApiProperty({ example: 'roomId', description: '메모룸 Id' })
-  roomId: number;
-
   @IsString()
-  @ApiProperty({ example: 'type', description: '메모챗 타입 TEXT | LINK' })
-  type: MemoChatCategory;
+  @ApiProperty({ example: 'type', description: '메모챗 타입 TEXT | LINK | PHOTO' })
+  type: string;
 
   @IsString()
   @ApiProperty({ example: '채팅 전송', description: '메시지 내용입니다.' })

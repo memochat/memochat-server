@@ -13,6 +13,8 @@ export class UserService {
   async updateNickname(user: User, { nickname }: PatchNicknameRequestDto) {
     user.updateNickname(nickname);
 
+    const newUser = new User();
+    newUser.createThumbnail();
     await this.userRepository.save(user);
 
     return user;
