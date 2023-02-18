@@ -25,13 +25,6 @@ export class UserController {
     return ResponseEntity.OK_WITH_DATA(user);
   }
 
-  @Get('/heapdump')
-  async heapdump() {
-    var filename = 'C:/Users/hyunse/' + Date.now() + '.heapsnapshot';
-    heapdump.writeSnapshot(filename);
-    return 'Heapdump has been generated in ' + filename;
-  }
-
   @Patch('/nickname')
   @Auth()
   @ApiOperation({ summary: '유저 닉네임 변경 API', description: '유저의 닉네임을 변경합니다.' })

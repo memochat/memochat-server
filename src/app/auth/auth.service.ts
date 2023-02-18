@@ -47,7 +47,7 @@ export class AuthService {
     user.password = await this.hashService.hash(password);
     user.nickname = user.createNickname(email);
     user.verified = true;
-
+    user.thumbnail = user.createThumbnail();
     await this.userRepository.save(user);
     await this.verifications.delete(verification.id);
 

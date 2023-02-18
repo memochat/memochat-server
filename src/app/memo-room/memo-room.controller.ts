@@ -19,7 +19,7 @@ import { RoomCategoryDto } from './dto/room-type.dto';
 import { UpdateMemoRoomOrederRequest } from '../../app/memo-room/dto/update-memo-room-order-request.dto';
 import { S3Service } from '../../common/modules/s3/s3.service';
 
-@Controller('/memo-rooms')
+@Controller('/rooms')
 @ApiTags('MemoRoom')
 export class MemoRoomController {
   constructor(private readonly memoRoomService: MemoRoomService, private readonly s3Service: S3Service) {}
@@ -52,11 +52,9 @@ export class MemoRoomController {
   async getCategories() {
     const categories = await this.memoRoomService.getCategories();
 
-    console.log(categories);
-
     return ResponseEntity.OK_WITH_DATA(
       categories.map((category) => {
-        // category.thumbnail = this.s3Service.presignForGet(category.thumbnail);
+        category.thumbnail = this.s3Service.presignForGet(category.thumbnail);
         return RoomCategoryDto.of(category);
       }),
     );
