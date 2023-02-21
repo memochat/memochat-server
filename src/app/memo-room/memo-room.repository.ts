@@ -53,9 +53,9 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
 
   async getAllMemoRoomsWithRecursiveByUserId(userId: number) {
     const results = await this.dataSource.query(
-      `with recursive ordered_room (id) as (
+      `with recursive ordered_room as (
         SELECT memo_room.id,0 as level, prev_room_id, next_room_id, created_at, updated_at, name, user_id, room_category_id, deleted_at
-        FROM memo_room where deleted_at is null and user_id = $1 and prev_room_id IS null
+        FROM memo_room where deleted_at is null and user_id = ${userId} and prev_room_id IS null
         
         union
         

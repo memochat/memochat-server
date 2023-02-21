@@ -1,7 +1,7 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import { Param } from '@nestjs/common/decorators';
 import { ParseIntPipe } from '@nestjs/common/pipes';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiErrorResponse } from 'src/common/decorators/api-error-response.decorator';
 import { ApiSuccessResponse } from 'src/common/decorators/api-success-response.decorator';
 import { Auth } from 'src/common/decorators/auth.decorator';
@@ -20,6 +20,7 @@ export class MemoChatController {
   constructor(private readonly memoChatService: MemoChatService, private readonly s3Service: S3Service) {}
 
   @Post('/:roomId/chats')
+  @ApiOperation({ summary: '메모챗 생성 API', description: '메모챗(TEXT|LINK|PHOTO)을 생성합니다.' })
   @Auth()
   @ApiSuccessResponse(HttpStatus.CREATED, MemoChat)
   @ApiErrorResponse(BadParameterException)
