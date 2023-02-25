@@ -7,6 +7,7 @@ import { ApiSuccessResponse } from 'src/common/decorators/api-success-response.d
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { BadParameterException } from 'src/common/exceptions/bad-parameter.exception';
+import { MemoRoomNotFoundException } from 'src/common/exceptions/memoroom-not-found.exception';
 import { S3Service } from 'src/common/modules/s3/s3.service';
 import { ResponseEntity } from 'src/common/response/response-entity';
 import { User } from '../user/user.entity';
@@ -23,7 +24,7 @@ export class MemoChatController {
   @ApiOperation({ summary: '메모챗 생성 API', description: '메모챗(TEXT|LINK|PHOTO)을 생성합니다.' })
   @Auth()
   @ApiSuccessResponse(HttpStatus.CREATED, MemoChat)
-  @ApiErrorResponse(BadParameterException)
+  @ApiErrorResponse(BadParameterException, MemoRoomNotFoundException)
   async create(@CurrentUser() user: User, @Param('roomId', ParseIntPipe) roomId: number, @Body() body: CreateMemoChatDto) {
     const memoChat = await this.memoChatService.create({ user, roomId, body });
 

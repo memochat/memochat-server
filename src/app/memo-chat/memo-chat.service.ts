@@ -11,6 +11,7 @@ import title from 'metascraper-title';
 import description from 'metascraper-description';
 import image from 'metascraper-image';
 import { MemoChat } from './memo-chat.entity';
+import { MemoRoomNotMatchedException } from 'src/common/exceptions/memoroom-not-matched.exception';
 
 @Injectable()
 export class MemoChatService {
@@ -21,12 +22,20 @@ export class MemoChatService {
 
   async create({ user, roomId, body }: { user: User; roomId: number; body: CreateMemoChatDto }) {
     const existedMemoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({
-      user: { id: user.id },
       id: roomId,
     });
     if (!existedMemoRoom) {
       throw new MemoRoomNotFoundException();
     }
+
+    if ((await existedMemoRoom.user).id !== user.id) {
+      throw new MemoRoomNotMatchedException();
+    }
+
+    /*
+    이 메모룸은 해당 유저의 메모룸이 아닙니다.
+    userId 가 다를 경우, roomId 가 다를 경우 0409hshs -> 1번방 (@번방)
+     */
 
     const memoChat = new MemoChat();
     switch (body.type) {
@@ -49,7 +58,7 @@ export class MemoChatService {
     memoChat.message = body.message;
     memoChat.memoRoomId = roomId;
     await this.memoChatRepository.save(memoChat);
-    return memoChat;
+    return { ...memoChat, type: memoChat.type.name };
   }
 
   async getMetadata(targetUrl: string) {

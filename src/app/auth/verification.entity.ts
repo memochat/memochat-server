@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 import { BaseEntity } from '../../common/base-entity';
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,6 +21,7 @@ export class Verification extends BaseEntity {
     required: true,
   })
   @Column()
+  @IsEmail()
   @IsString()
   email: string;
 
