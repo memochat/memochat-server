@@ -76,7 +76,7 @@ export class MemoRoomController {
 
   @Get('/:id')
   @Auth()
-  @ApiSuccessResponse(HttpStatus.OK, MemoRoomDto)
+  @ApiSuccessResponse(HttpStatus.OK, MemoRoomDto, { isArray: true })
   @ApiErrorResponse(MemoRoomNotFoundException)
   async get(@CurrentUser() user: User, @Param('id', ParseIntPipe) memoRoomId: number) {
     const memoRoom = await this.memoRoomService.get({ user, memoRoomId });

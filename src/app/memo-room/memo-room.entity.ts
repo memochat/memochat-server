@@ -14,6 +14,9 @@ export class MemoRoom extends BaseEntity {
   @Column({ type: 'varchar', length: 20 })
   name: string;
 
+  @Column({ type: 'varchar', length: 400, default: null, nullable: true })
+  message?: string;
+
   @ManyToOne(() => RoomCategory, { eager: true, nullable: false })
   @JoinColumn({ name: 'room_category_id', referencedColumnName: 'id' })
   roomCategory: RoomCategory;
@@ -41,6 +44,7 @@ export class MemoRoom extends BaseEntity {
 
   remove() {
     this.deletedAt = new Date();
+    this.message = null;
     this.previousRoom = null;
     this.previousRoomId = null;
     this.nextRoom = null;

@@ -54,16 +54,23 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
   async getAllMemoRoomsWithRecursiveByUserId(userId: number) {
     const results = await this.dataSource.query(
       `with recursive ordered_room as (
-        SELECT memo_room.id,0 as level, prev_room_id, next_room_id, created_at, updated_at, name, user_id, room_category_id, deleted_at
-        FROM memo_room where deleted_at is null and user_id = ${userId} and prev_room_id IS null
-        
+        SELECT mr.id, 0 as level, mr.prev_room_id, mr.next_room_id, mr.created_at, mr.updated_at, mr.name, mr.user_id, mr.room_category_id, mr.deleted_at
+        FROM memo_room mr where mr.user_id = 4 and mr.deleted_at is null and prev_room_id IS null
         union
-        
-        SELECT m.id,ordered_room.level + 1 as level, m.prev_room_id, m.next_room_id, m.created_at, m.updated_at, m.name, m.user_id, m.room_category_id, m.deleted_at
-        FROM memo_room m join ordered_room on (m.prev_room_id = ordered_room.id)  where m.deleted_at is null
+        SELECT m.id, om.level + 1 as level, m.prev_room_id, m.next_room_id, m.created_at, m.updated_at, m.name, m.user_id, m.room_category_id, m.deleted_at
+        FROM memo_room m join ordered_room om on (m.prev_room_id = om.id)  where m.deleted_at is null
       )
-      
-      select om.*, rt.name as room_category_name, rt.thumbnail as room_category_thumbnail from ordered_room om left join room_category rt on om.room_category_id = rt.id order by om.level;`,
+      select om.id, om.level, om.prev_room_id, om.next_room_id, mc.created_at, mc.updated_at, mc.message, rt.name as room_category_name, rt.thumbnail as room_category_thumbnail from ordered_room om left join room_category rt on om.room_category_id = rt.id left join (SELECT 
+      *
+      FROM
+        memo_chat a,
+        (SELECT 
+            MAX(updated_at) as d
+        FROM
+            memo_chat
+        GROUP BY room_id) b
+        WHERE 1=1 and
+        a.updated_at = b.d) mc on mc.room_id = om.id order by om.level;`,
       [userId],
     );
 
@@ -73,6 +80,7 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
         name: result.name,
         createdAt: result.created_at,
         updatedAt: result.updated_at,
+        message: result.message ?? '사진',
         roomCategory: {
           id: result.room_category_id,
           name: MemoRoomCategory.find(result.room_category_name),
