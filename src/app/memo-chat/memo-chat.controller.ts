@@ -1,5 +1,5 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
-import { Param } from '@nestjs/common/decorators';
+import { Get, Param, Query } from '@nestjs/common/decorators';
 import { ParseIntPipe } from '@nestjs/common/pipes';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiErrorResponse } from 'src/common/decorators/api-error-response.decorator';
@@ -12,6 +12,7 @@ import { S3Service } from 'src/common/modules/s3/s3.service';
 import { ResponseEntity } from 'src/common/response/response-entity';
 import { User } from '../user/user.entity';
 import { CreateMemoChatDto } from './dto/create-memochat.dto';
+import { GetAllMemoChatDto } from './dto/getAll-memochat.dto';
 import { MemoChat } from './memo-chat.entity';
 import { MemoChatService } from './memo-chat.service';
 
@@ -27,6 +28,21 @@ export class MemoChatController {
   @ApiErrorResponse(BadParameterException, MemoRoomNotFoundException)
   async create(@CurrentUser() user: User, @Param('roomId', ParseIntPipe) roomId: number, @Body() body: CreateMemoChatDto) {
     const memoChat = await this.memoChatService.create({ user, roomId, body });
+
+    return ResponseEntity.OK_WITH_DATA(memoChat);
+  }
+
+  @Get('/:roomId/chats')
+  @ApiOperation({ summary: '메모룸 내 전체 Chat 조회 API', description: ':roomId에 관한 전체 Chat을 조회합니다.' })
+  @Auth()
+  @ApiSuccessResponse(HttpStatus.OK, MemoChat, { isArray: true })
+  @ApiErrorResponse(BadParameterException, MemoRoomNotFoundException)
+  async gets(
+    @CurrentUser() user: User,
+    @Param('roomId', ParseIntPipe) roomId: number,
+    @Query() getAllMemoChatDto: GetAllMemoChatDto,
+  ) {
+    const memoChat = await this.memoChatService.gets({ user, roomId, getAllMemoChatDto });
 
     return ResponseEntity.OK_WITH_DATA(memoChat);
   }
