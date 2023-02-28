@@ -12,12 +12,15 @@ import description from 'metascraper-description';
 import image from 'metascraper-image';
 import { MemoChat } from './memo-chat.entity';
 import { MemoRoomNotMatchedException } from 'src/common/exceptions/memoroom-not-matched.exception';
+import { MemoRoomService } from '../memo-room/memo-room.service';
+import { GetAllMemoChatDto } from './dto/getAll-memochat.dto';
 
 @Injectable()
 export class MemoChatService {
   constructor(
     private readonly memoChatRepository: MemoChatRepository,
     private readonly memoRoomRepository: MemoRoomRepository,
+    private readonly memoRoomService: MemoRoomService,
   ) {}
 
   async create({ user, roomId, body }: { user: User; roomId: number; body: CreateMemoChatDto }) {
@@ -58,7 +61,54 @@ export class MemoChatService {
     memoChat.message = body.message;
     memoChat.memoRoomId = roomId;
     await this.memoChatRepository.save(memoChat);
+
+    if (existedMemoRoom.previousRoomId !== null && existedMemoRoom.nextRoomId !== null) {
+      await this.memoRoomService.updateOrder({
+        user,
+        memoRoomId: existedMemoRoom.id,
+        previousMemoRoomId: existedMemoRoom.previousRoomId,
+      });
+    }
     return { ...memoChat, type: memoChat.type.name };
+  }
+
+  async gets({ user, roomId, getAllMemoChatDto }: { user: User; roomId: number; getAllMemoChatDto: GetAllMemoChatDto }) {
+    const existedMemoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({
+      id: roomId,
+    });
+    if (!existedMemoRoom) {
+      throw new MemoRoomNotFoundException();
+    }
+
+    if ((await existedMemoRoom.user).id !== user.id) {
+      throw new MemoRoomNotMatchedException();
+    }
+
+    const { limit, offset } = getAllMemoChatDto;
+
+    const existedChats = await this.memoChatRepository.find({
+      select: {
+        id: true,
+        createdAt: true,
+        message: true,
+        title: true,
+        description: true,
+        thumbnail: true,
+        type: {
+          enumName: true,
+        },
+      },
+      where: { memoRoomId: roomId },
+      order: { createdAt: 'DESC' },
+      cache: true,
+      take: limit,
+      skip: (offset - 1) * limit,
+    });
+
+    return existedChats.map((existedChat) => ({
+      ...existedChat,
+      type: existedChat.type.enumName,
+    }));
   }
 
   async getMetadata(targetUrl: string) {
