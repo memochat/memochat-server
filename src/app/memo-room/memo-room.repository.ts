@@ -55,12 +55,12 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
     const results = await this.dataSource.query(
       `with recursive ordered_room as (
         SELECT mr.id, 0 as level, mr.prev_room_id, mr.next_room_id, mr.created_at, mr.updated_at, mr.name, mr.user_id, mr.room_category_id, mr.deleted_at
-        FROM memo_room mr where mr.user_id = 4 and mr.deleted_at is null and prev_room_id IS null
+        FROM memo_room mr where mr.user_id = ${userId} and mr.deleted_at is null and prev_room_id IS null
         union
         SELECT m.id, om.level + 1 as level, m.prev_room_id, m.next_room_id, m.created_at, m.updated_at, m.name, m.user_id, m.room_category_id, m.deleted_at
         FROM memo_room m join ordered_room om on (m.prev_room_id = om.id)  where m.deleted_at is null
       )
-      select om.id, om.level, om.prev_room_id, om.next_room_id, mc.created_at, mc.updated_at, mc.message, rt.name as room_category_name, rt.thumbnail as room_category_thumbnail from ordered_room om left join room_category rt on om.room_category_id = rt.id left join (SELECT 
+      select om.id, om.level, om.name, mc.created_at, mc.updated_at, mc.message, rt.name as room_category_name, rt.thumbnail as room_category_thumbnail from ordered_room om left join room_category rt on om.room_category_id = rt.id left join (SELECT 
       *
       FROM
         memo_chat a,
