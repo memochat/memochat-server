@@ -50,7 +50,7 @@ export class MemoChatController {
   }
 
   @Delete('/:roomId/chats/:chatId')
-  @ApiOperation({ summary: '메모룸 내 전체 Chat 조회 API', description: ':roomId에 관한 전체 Chat을 조회합니다.' })
+  @ApiOperation({ summary: '메모챗 삭제 API', description: ': 해당하는 메모룸 내에 있는 메모챗을 삭제합니다.' })
   @Auth()
   @ApiSuccessResponse(HttpStatus.OK)
   @ApiErrorResponse(BadParameterException, MemoRoomNotFoundException, MemoChatNotFoundException)
