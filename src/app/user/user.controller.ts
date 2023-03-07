@@ -37,7 +37,7 @@ export class UserController {
   @Get('/password')
   @Auth()
   @ApiOperation({ summary: '유저 비밀번호 확인 API', description: '입력한 비밀번호와 유저의 현재 비밀번호를 확인합니다.' })
-  @ApiSuccessResponse(HttpStatus.OK)
+  @ApiSuccessResponse(HttpStatus.NO_CONTENT)
   @ApiErrorResponse(NotMatchedPasswordException)
   async checkPassword(@CurrentUser() user: User, @Body() passwordRequestDto: PasswordRequestDto) {
     await this.userService.checkPassword(user, passwordRequestDto);

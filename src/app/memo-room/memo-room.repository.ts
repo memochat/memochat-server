@@ -69,7 +69,7 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
         FROM
             memo_chat
         GROUP BY room_id) b
-        WHERE 1=1 and
+        WHERE 1=1 and deleted_at IS NULL and
         a.updated_at = b.d) mc on mc.room_id = om.id order by om.level;`,
       [userId],
     );

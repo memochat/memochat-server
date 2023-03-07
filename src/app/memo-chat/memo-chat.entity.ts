@@ -1,10 +1,11 @@
 import { BaseEntity } from '../../common/base-entity';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { MemoRoom } from '../memo-room/memo-room.entity';
 import { MemoChatCategory } from './type/memo-chat-category';
 import { MemoChatCategoryTransformer } from './type/memo-chat-category.transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 
 @Entity({ name: 'memo_chat' })
 export class MemoChat extends BaseEntity {
@@ -66,6 +67,6 @@ export class MemoChat extends BaseEntity {
     example: '삭제된 날짜',
     description: '삭제된 메모일 경우 삭제 날짜가 기입됩니다.',
   })
-  @Column({ type: 'timestamp', nullable: true })
+  @DeleteDateColumn()
   deletedAt: Date | null;
 }
