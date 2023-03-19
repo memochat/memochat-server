@@ -1,5 +1,5 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
-import { Get, Param, Query } from '@nestjs/common/decorators';
+import { Get, Param, Query, Delete } from '@nestjs/common/decorators';
 import { ParseIntPipe } from '@nestjs/common/pipes';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiErrorResponse } from 'src/common/decorators/api-error-response.decorator';
@@ -7,11 +7,13 @@ import { ApiSuccessResponse } from 'src/common/decorators/api-success-response.d
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { BadParameterException } from 'src/common/exceptions/bad-parameter.exception';
+import { MemoChatNotFoundException } from 'src/common/exceptions/memochat-not-found.exception';
 import { MemoRoomNotFoundException } from 'src/common/exceptions/memoroom-not-found.exception';
 import { S3Service } from 'src/common/modules/s3/s3.service';
 import { ResponseEntity } from 'src/common/response/response-entity';
 import { User } from '../user/user.entity';
 import { CreateMemoChatDto } from './dto/create-memochat.dto';
+import { DeleteMemoChatDto } from './dto/delete-memochat.dto';
 import { GetAllMemoChatDto } from './dto/getAll-memochat.dto';
 import { MemoChat } from './memo-chat.entity';
 import { MemoChatService } from './memo-chat.service';
@@ -47,8 +49,16 @@ export class MemoChatController {
     return ResponseEntity.OK_WITH_DATA(memoChat);
   }
 
+  @Delete('/:roomId/chats/:chatId')
+  @ApiOperation({ summary: '메모챗 삭제 API', description: ': 해당하는 메모룸 내에 있는 메모챗을 삭제합니다.' })
+  @Auth()
+  @ApiSuccessResponse(HttpStatus.OK)
+  @ApiErrorResponse(BadParameterException, MemoRoomNotFoundException, MemoChatNotFoundException)
+  async delete(@CurrentUser() user: User, @Param() deleteMemoChatDto: DeleteMemoChatDto) {
+    const deletedMemoCaht = await this.memoChatService.delete({ user, deleteMemoChatDto });
+    return ResponseEntity.OK();
+  }
   /*
-  POST rooms/:id/chats
   PUT rooms/:id/chats/:id
   DELETE rooms/:id/chats/:chat_id
 

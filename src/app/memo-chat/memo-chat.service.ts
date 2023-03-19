@@ -14,6 +14,8 @@ import { MemoChat } from './memo-chat.entity';
 import { MemoRoomNotMatchedException } from 'src/common/exceptions/memoroom-not-matched.exception';
 import { MemoRoomService } from '../memo-room/memo-room.service';
 import { GetAllMemoChatDto } from './dto/getAll-memochat.dto';
+import { MemoChatNotFoundException } from 'src/common/exceptions/memochat-not-found.exception';
+import { DeleteMemoChatDto } from './dto/delete-memochat.dto';
 
 @Injectable()
 export class MemoChatService {
@@ -109,6 +111,32 @@ export class MemoChatService {
       ...existedChat,
       type: existedChat.type.enumName,
     }));
+  }
+
+  async delete({ user, deleteMemoChatDto }: { user: User; deleteMemoChatDto: DeleteMemoChatDto }) {
+    const { roomId: memoRoomId, chatId: id } = deleteMemoChatDto;
+
+    const existedMemoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({
+      id: memoRoomId,
+    });
+    if (!existedMemoRoom) {
+      throw new MemoRoomNotFoundException();
+    }
+
+    if ((await existedMemoRoom.user).id !== user.id) {
+      throw new MemoRoomNotMatchedException();
+    }
+
+    const willDeleteMemoChat = await this.memoChatRepository.findOneBy({ id });
+    if (!willDeleteMemoChat) {
+      throw new MemoChatNotFoundException();
+    }
+
+    if (willDeleteMemoChat.memoRoomId !== existedMemoRoom.id) {
+      throw new MemoRoomNotMatchedException(`해당 메모챗이 올바른 메모룸에 존재하지 않습니다.`);
+    }
+
+    return await this.memoChatRepository.softDelete({ id });
   }
 
   async getMetadata(targetUrl: string) {
