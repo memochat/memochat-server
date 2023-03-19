@@ -1,5 +1,5 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
-import { Get, Param, Query, Delete } from '@nestjs/common/decorators';
+import { Get, Param, Query, Delete, Patch } from '@nestjs/common/decorators';
 import { ParseIntPipe } from '@nestjs/common/pipes';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiErrorResponse } from 'src/common/decorators/api-error-response.decorator';
@@ -49,19 +49,27 @@ export class MemoChatController {
     return ResponseEntity.OK_WITH_DATA(memoChat);
   }
 
+  @Patch('/:roomId/chats/:id')
+  @ApiOperation({ summary: '메모챗 수정 API', description: ': 해당하는 메모룸 내에 있는 메모챗을 수정합니다.' })
+  @Auth()
+  @ApiSuccessResponse(HttpStatus.OK, MemoChat)
+  @ApiErrorResponse(BadParameterException, MemoRoomNotFoundException, MemoChatNotFoundException)
+  async update(
+    @CurrentUser() user: User,
+    @Param() deleteMemoChatDto: DeleteMemoChatDto,
+    @Body() createMemoChatDto: CreateMemoChatDto,
+  ) {
+    const updatedMemoChat = await this.memoChatService.update({ user, deleteMemoChatDto, createMemoChatDto });
+    return ResponseEntity.OK_WITH_DATA(updatedMemoChat);
+  }
+
   @Delete('/:roomId/chats/:id')
   @ApiOperation({ summary: '메모챗 삭제 API', description: ': 해당하는 메모룸 내에 있는 메모챗을 삭제합니다.' })
   @Auth()
   @ApiSuccessResponse(HttpStatus.OK)
   @ApiErrorResponse(BadParameterException, MemoRoomNotFoundException, MemoChatNotFoundException)
   async delete(@CurrentUser() user: User, @Param() deleteMemoChatDto: DeleteMemoChatDto) {
-    const deletedMemoCaht = await this.memoChatService.delete({ user, deleteMemoChatDto });
+    const deletedMemoChat = await this.memoChatService.delete({ user, deleteMemoChatDto });
     return ResponseEntity.OK();
   }
-  /*
-  PUT rooms/:id/chats/:id
-  DELETE rooms/:id/chats/:chat_id
-
-  메모챗 조회, 수정, 삭제
-  */
 }
