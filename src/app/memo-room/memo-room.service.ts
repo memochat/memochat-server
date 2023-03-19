@@ -44,18 +44,8 @@ export class MemoRoomService {
     return memoRoom;
   }
 
-  async update({
-    user,
-    memoRoomId,
-    name,
-    roomCategoryId,
-  }: {
-    user: User;
-    memoRoomId: number;
-    name: string;
-    roomCategoryId: number;
-  }) {
-    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: memoRoomId });
+  async update({ user, id, name, roomCategoryId }: { user: User; id: number; name: string; roomCategoryId: number }) {
+    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id });
     if (!memoRoom) {
       throw new MemoRoomNotFoundException();
     }
@@ -77,8 +67,8 @@ export class MemoRoomService {
     return memoRooms;
   }
 
-  async get({ user, memoRoomId }: { user: User; memoRoomId: number }) {
-    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: memoRoomId });
+  async get({ user, roomId }: { user: User; roomId: number }) {
+    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: roomId });
     if (!memoRoom) {
       throw new MemoRoomNotFoundException();
     }
@@ -90,32 +80,24 @@ export class MemoRoomService {
     return this.roomCategoryRepository.find();
   }
 
-  async delete({ user, memoRoomId }: { user: User; memoRoomId: number }) {
-    await this.memoRoomRepository.softDelete({ id: memoRoomId, user: { id: user.id } });
+  async delete({ user, roomId }: { user: User; roomId: number }) {
+    await this.memoRoomRepository.softDelete({ id: roomId, user: { id: user.id } });
   }
 
-  async updateOrder({
-    user,
-    memoRoomId,
-    previousMemoRoomId,
-  }: {
-    user: User;
-    memoRoomId: number;
-    previousMemoRoomId: number;
-  }) {
-    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: memoRoomId });
+  async updateOrder({ user, roomId, previousRoomId }: { user: User; roomId: number; previousRoomId: number }) {
+    const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: roomId });
     if (!memoRoom) {
       throw new MemoRoomNotFoundException();
     }
 
-    if (memoRoom.previousRoomId === previousMemoRoomId) return;
+    if (memoRoom.previousRoomId === previousRoomId) return;
 
     const previousMemoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({
       user: { id: user.id },
-      id: previousMemoRoomId,
+      id: previousRoomId,
     });
 
-    if (previousMemoRoomId > 0 && !previousMemoRoom) {
+    if (previousRoomId > 0 && !previousMemoRoom) {
       throw new MemoRoomNotFoundException();
     }
 

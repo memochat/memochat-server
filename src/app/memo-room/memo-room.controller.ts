@@ -34,16 +34,12 @@ export class MemoRoomController {
     return ResponseEntity.OK_WITH_DATA(MemoRoomId.of(memoRoom));
   }
 
-  @Put('/:memoRoomId')
+  @Put('/:id')
   @Auth()
   @ApiSuccessResponse(HttpStatus.NO_CONTENT)
   @ApiErrorResponse(BadParameterException, RoomCategoryNotFoundException, MemoRoomNotFoundException)
-  async update(
-    @CurrentUser() user: User,
-    @Param('memoRoomId', ParseIntPipe) memoRoomId: number,
-    @Body() body: UpdateMemoRoomRequest,
-  ) {
-    await this.memoRoomService.update({ user, memoRoomId, name: body.name, roomCategoryId: body.roomCategoryId });
+  async update(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number, @Body() body: UpdateMemoRoomRequest) {
+    await this.memoRoomService.update({ user, id, name: body.name, roomCategoryId: body.roomCategoryId });
   }
 
   @Get('/categories')
@@ -78,8 +74,8 @@ export class MemoRoomController {
   @Auth()
   @ApiSuccessResponse(HttpStatus.OK, MemoRoomDto, { isArray: true })
   @ApiErrorResponse(MemoRoomNotFoundException)
-  async get(@CurrentUser() user: User, @Param('id', ParseIntPipe) memoRoomId: number) {
-    const memoRoom = await this.memoRoomService.get({ user, memoRoomId });
+  async get(@CurrentUser() user: User, @Param('id', ParseIntPipe) roomId: number) {
+    const memoRoom = await this.memoRoomService.get({ user, roomId });
 
     memoRoom.roomCategory.thumbnail = this.s3Service.presignForGet(memoRoom.roomCategory.thumbnail);
 
@@ -92,16 +88,16 @@ export class MemoRoomController {
   @ApiErrorResponse(MemoRoomNotFoundException)
   async updateOrder(
     @CurrentUser() user: User,
-    @Param('id', ParseIntPipe) memoRoomId: number,
+    @Param('id', ParseIntPipe) roomId: number,
     @Body() body: UpdateMemoRoomOrederRequest,
   ) {
-    await this.memoRoomService.updateOrder({ user, memoRoomId, previousMemoRoomId: body.previousMemoRoomId });
+    await this.memoRoomService.updateOrder({ user, roomId, previousRoomId: body.previousRoomId });
   }
 
   @Delete('/:id')
   @Auth()
   @ApiSuccessResponse(HttpStatus.NO_CONTENT)
-  async delete(@CurrentUser() user: User, @Param('id', ParseIntPipe) memoRoomId: number) {
-    await this.memoRoomService.delete({ user, memoRoomId });
+  async delete(@CurrentUser() user: User, @Param('id', ParseIntPipe) roomId: number) {
+    await this.memoRoomService.delete({ user, roomId });
   }
 }
