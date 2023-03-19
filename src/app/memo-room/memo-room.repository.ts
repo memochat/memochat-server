@@ -54,26 +54,31 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
   async getAllMemoRoomsWithRecursiveByUserId(userId: number) {
     const results = await this.dataSource.query(
       `SELECT 
-        mr.id,
-        mr.created_at,
-        MAX(mc.updated_at) updated_at,
-        mr.name,
-        rt.name AS room_category_name,
-        rt.thumbnail AS room_category_thumbnail,
-        mc.message,
-        mr.prev_room_id,
-        mr.next_room_id
-    FROM
-        memo_room mr
-            LEFT JOIN
-        room_category rt ON mr.room_category_id = rt.id,
-        memo_chat mc
-    WHERE
-        mr.user_id = ${userId} AND mr.id = mc.room_id
-            AND mc.deleted_at IS NULL
-            AND mr.deleted_at IS NULL
-    GROUP BY mr.id
-    ORDER BY mc.updated_at DESC;`,
+          mr.id,
+          mr.created_at,
+          mc.updated_at,
+          mr.name,
+          rt.name AS room_category_name,
+          rt.thumbnail AS room_category_thumbnail,
+          mc.message,
+          mr.prev_room_id,
+          mr.next_room_id
+      FROM
+          memo_room mr
+              LEFT JOIN
+          room_category rt ON rt.id = mr.room_category_id,
+          memo_chat mc
+      WHERE
+          mr.id = mc.room_id AND mr.user_id = 4
+              AND mr.deleted_at IS NULL
+              AND mc.updated_at IN (SELECT 
+                  MAX(updated_at)
+              FROM
+                  memo_chat
+              WHERE
+                  deleted_at IS NULL
+              GROUP BY room_id)
+      ORDER BY mc.updated_at DESC;`,
       [userId],
     );
 

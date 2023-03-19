@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Get, Patch } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Get, Post, Patch } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiErrorResponse } from '../../common/decorators/api-error-response.decorator';
 import { NotMatchedPasswordException } from '../../common/exceptions/not-matched-password.exception';
@@ -10,7 +10,6 @@ import { PasswordRequestDto } from './dto/password-request.dto';
 import { PatchNicknameRequestDto } from './dto/patch-nickname-request.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
-import heapdump from 'heapdump';
 
 @Controller('/users')
 @ApiTags('Users')
@@ -28,13 +27,13 @@ export class UserController {
   @Patch('/nickname')
   @Auth()
   @ApiOperation({ summary: '유저 닉네임 변경 API', description: '유저의 닉네임을 변경합니다.' })
-  @ApiSuccessResponse(HttpStatus.NO_CONTENT)
+  @ApiSuccessResponse(HttpStatus.OK)
   async update(@CurrentUser() user: User, @Body() patchNicknameRequestDto: PatchNicknameRequestDto) {
     await this.userService.updateNickname(user, patchNicknameRequestDto);
     return ResponseEntity.OK();
   }
 
-  @Get('/password')
+  @Post('/password')
   @Auth()
   @ApiOperation({ summary: '유저 비밀번호 확인 API', description: '입력한 비밀번호와 유저의 현재 비밀번호를 확인합니다.' })
   @ApiSuccessResponse(HttpStatus.NO_CONTENT)

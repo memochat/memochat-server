@@ -5,7 +5,6 @@ import { MemoChatCategory } from './type/memo-chat-category';
 import { MemoChatCategoryTransformer } from './type/memo-chat-category.transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
 
 @Entity({ name: 'memo_chat' })
 export class MemoChat extends BaseEntity {
@@ -36,6 +35,14 @@ export class MemoChat extends BaseEntity {
   @IsNotEmpty()
   @Column({ type: 'varchar', length: 20, transformer: new MemoChatCategoryTransformer() })
   type: MemoChatCategory;
+
+  @ApiProperty({
+    example: 'https://react.dev/reference/react',
+    description: '사용자가 보내는 text 중 link 입니다. LINK 유형에서만 존재합니다',
+  })
+  @IsString()
+  @Column({ type: 'varchar', length: 4000, nullable: true })
+  link?: string | null;
 
   @ApiProperty({
     example: '옵시디언 사용해 보실래요? - 동기화, 백업 환경 구축',

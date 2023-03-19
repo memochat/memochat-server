@@ -3,7 +3,7 @@ import { Transform } from 'class-transformer';
 import { IsBoolean, IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../../common/base-entity';
-import { ThumbnailColor, UserThumbnail } from './type/user-thumbnail';
+import { ThumbnailColor } from './type/user-thumbnail';
 import * as mathjs from 'mathjs';
 
 @Entity()

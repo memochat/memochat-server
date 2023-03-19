@@ -37,11 +37,6 @@ export class MemoChatService {
       throw new MemoRoomNotMatchedException();
     }
 
-    /*
-    이 메모룸은 해당 유저의 메모룸이 아닙니다.
-    userId 가 다를 경우, roomId 가 다를 경우 0409hshs -> 1번방 (@번방)
-     */
-
     const memoChat = new MemoChat();
     switch (body.type) {
       case MemoChatCategory.TEXT.name:
@@ -51,6 +46,7 @@ export class MemoChatService {
       case MemoChatCategory.LINK.name:
         memoChat.type = MemoChatCategory.LINK;
         const metadata = await this.getMetadata(body.link);
+        memoChat.link = body.link;
         memoChat.title = metadata.title;
         memoChat.description = metadata.description;
         memoChat.thumbnail = metadata.image;
@@ -94,6 +90,7 @@ export class MemoChatService {
         createdAt: true,
         message: true,
         title: true,
+        link: true,
         description: true,
         thumbnail: true,
         type: {
