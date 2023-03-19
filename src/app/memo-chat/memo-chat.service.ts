@@ -110,6 +110,66 @@ export class MemoChatService {
     }));
   }
 
+  async update({
+    user,
+    deleteMemoChatDto,
+    createMemoChatDto,
+  }: {
+    user: User;
+    deleteMemoChatDto: DeleteMemoChatDto;
+    createMemoChatDto: CreateMemoChatDto;
+  }) {
+    const { id, roomId } = deleteMemoChatDto;
+    const { type, message, link } = createMemoChatDto;
+
+    const existedMemoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({
+      id: roomId,
+    });
+    if (!existedMemoRoom) {
+      throw new MemoRoomNotFoundException();
+    }
+
+    if ((await existedMemoRoom.user).id !== user.id) {
+      throw new MemoRoomNotMatchedException();
+    }
+
+    const willUpdateMemoChat = await this.memoChatRepository.findOneBy({ id });
+    if (!willUpdateMemoChat) {
+      throw new MemoChatNotFoundException();
+    }
+
+    if (willUpdateMemoChat.roomId !== existedMemoRoom.id) {
+      throw new MemoRoomNotMatchedException(`해당 메모챗이 올바른 메모룸에 존재하지 않습니다.`);
+    }
+
+    switch (type) {
+      case MemoChatCategory.LINK.name:
+        willUpdateMemoChat.type = MemoChatCategory.LINK;
+        const metadata = await this.getMetadata(link);
+        willUpdateMemoChat.link = link;
+        willUpdateMemoChat.title = metadata.title;
+        willUpdateMemoChat.description = metadata.description;
+        willUpdateMemoChat.thumbnail = metadata.image;
+        break;
+
+      case MemoChatCategory.TEXT.name:
+        willUpdateMemoChat.type = MemoChatCategory.TEXT;
+        willUpdateMemoChat.link = null;
+        willUpdateMemoChat.title = null;
+        willUpdateMemoChat.description = null;
+        willUpdateMemoChat.thumbnail = null;
+        break;
+
+      default:
+        break;
+    }
+
+    willUpdateMemoChat.message = message;
+    await this.memoChatRepository.save(willUpdateMemoChat);
+
+    return { ...willUpdateMemoChat, type: willUpdateMemoChat.type.name };
+  }
+
   async delete({ user, deleteMemoChatDto }: { user: User; deleteMemoChatDto: DeleteMemoChatDto }) {
     const { roomId, id } = deleteMemoChatDto;
 
