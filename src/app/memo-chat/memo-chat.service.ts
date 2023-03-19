@@ -57,14 +57,14 @@ export class MemoChatService {
     }
 
     memoChat.message = body.message;
-    memoChat.memoRoomId = roomId;
+    memoChat.roomId = roomId;
     await this.memoChatRepository.save(memoChat);
 
     if (existedMemoRoom.previousRoomId !== null && existedMemoRoom.nextRoomId !== null) {
       await this.memoRoomService.updateOrder({
         user,
-        memoRoomId: existedMemoRoom.id,
-        previousMemoRoomId: existedMemoRoom.previousRoomId,
+        roomId: existedMemoRoom.id,
+        previousRoomId: existedMemoRoom.previousRoomId,
       });
     }
     return { ...memoChat, type: memoChat.type.name };
@@ -97,7 +97,7 @@ export class MemoChatService {
           enumName: true,
         },
       },
-      where: { memoRoomId: roomId },
+      where: { roomId },
       order: { createdAt: 'DESC' },
       cache: true,
       take: limit,
@@ -111,10 +111,10 @@ export class MemoChatService {
   }
 
   async delete({ user, deleteMemoChatDto }: { user: User; deleteMemoChatDto: DeleteMemoChatDto }) {
-    const { roomId: memoRoomId, chatId: id } = deleteMemoChatDto;
+    const { roomId, id } = deleteMemoChatDto;
 
     const existedMemoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({
-      id: memoRoomId,
+      id: roomId,
     });
     if (!existedMemoRoom) {
       throw new MemoRoomNotFoundException();
@@ -129,7 +129,7 @@ export class MemoChatService {
       throw new MemoChatNotFoundException();
     }
 
-    if (willDeleteMemoChat.memoRoomId !== existedMemoRoom.id) {
+    if (willDeleteMemoChat.roomId !== existedMemoRoom.id) {
       throw new MemoRoomNotMatchedException(`해당 메모챗이 올바른 메모룸에 존재하지 않습니다.`);
     }
 

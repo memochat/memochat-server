@@ -15,7 +15,7 @@ export class MemoChat extends BaseEntity {
   @ApiProperty({ example: '1', description: '메모챗이 속하는 MemoRoom Id입니다.', required: true })
   @IsNumber()
   @Column({ name: 'room_id' })
-  memoRoomId: number;
+  roomId: number;
 
   @ApiProperty({
     example: 'memochat',

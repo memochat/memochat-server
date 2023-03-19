@@ -49,7 +49,7 @@ export class MemoChatController {
     return ResponseEntity.OK_WITH_DATA(memoChat);
   }
 
-  @Delete('/:roomId/chats/:chatId')
+  @Delete('/:roomId/chats/:id')
   @ApiOperation({ summary: '메모챗 삭제 API', description: ': 해당하는 메모룸 내에 있는 메모챗을 삭제합니다.' })
   @Auth()
   @ApiSuccessResponse(HttpStatus.OK)
