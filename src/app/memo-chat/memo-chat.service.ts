@@ -16,6 +16,11 @@ import { MemoRoomService } from '../memo-room/memo-room.service';
 import { GetAllMemoChatDto } from './dto/getAll-memochat.dto';
 import { MemoChatNotFoundException } from 'src/common/exceptions/memochat-not-found.exception';
 import { DeleteMemoChatDto } from './dto/delete-memochat.dto';
+import { ChatDto } from './dto/chat.dto';
+import { GetMemoChat } from './dto/get-memochat.dto';
+import { PageMetaDto } from './dto/page-meta.dto';
+import { PageOptionsDto } from './dto/page-option.dto';
+import { BadParameterException } from 'src/common/exceptions/bad-parameter.exception';
 
 @Injectable()
 export class MemoChatService {
@@ -70,7 +75,15 @@ export class MemoChatService {
     return { ...memoChat, type: memoChat.type.name };
   }
 
-  async gets({ user, roomId, getAllMemoChatDto }: { user: User; roomId: number; getAllMemoChatDto: GetAllMemoChatDto }) {
+  async gets({
+    user,
+    roomId,
+    pageOptionsDto,
+  }: {
+    user: User;
+    roomId: number;
+    pageOptionsDto: PageOptionsDto;
+  }): Promise<ChatDto<GetMemoChat>> {
     const existedMemoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({
       id: roomId,
     });
@@ -82,12 +95,12 @@ export class MemoChatService {
       throw new MemoRoomNotMatchedException();
     }
 
-    const { limit, offset } = getAllMemoChatDto;
+    const { take, page } = pageOptionsDto;
 
-    const existedChats = await this.memoChatRepository.find({
+    const [existedChats, total] = await this.memoChatRepository.findAndCount({
       select: {
         id: true,
-        createdAt: true,
+        updatedAt: true,
         message: true,
         title: true,
         link: true,
@@ -98,16 +111,26 @@ export class MemoChatService {
         },
       },
       where: { roomId },
-      order: { createdAt: 'DESC' },
+      order: { updatedAt: 'DESC' },
       cache: true,
-      take: limit,
-      skip: (offset - 1) * limit,
+      take,
+      skip: (page - 1) * take,
     });
 
-    return existedChats.map((existedChat) => ({
-      ...existedChat,
-      type: existedChat.type.enumName,
-    }));
+    const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
+    const lastPage = Math.ceil(total / take);
+
+    if (lastPage >= page) {
+      return {
+        data: existedChats.map((existedChat) => ({
+          ...existedChat,
+          type: existedChat.type.enumName,
+        })),
+        meta: pageMetaDto,
+      };
+    } else {
+      throw new BadParameterException('존재하지 않는 페이지입니다.');
+    }
   }
 
   async update({

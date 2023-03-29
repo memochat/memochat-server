@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MemoRoom } from '../memo-room.entity';
+import { RoomCategoryDto } from './room-type.dto';
 
 export class MemoRoomDto {
   @ApiProperty({ example: 3 })
@@ -14,14 +15,8 @@ export class MemoRoomDto {
   @ApiProperty({ example: '장보기목록' })
   name: string;
 
-  @ApiProperty({ example: 'roomCategory 이름 : BUDGET' })
-  roomCategoryName: string;
-
-  @ApiProperty({
-    example:
-      'roomCategory 썸네일 : https://memochat-public.s3.ap-northeast-2.amazonaws.com/memoRoomCategory/memoRoomCategory1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3ADKWL776KJR4DM2%2F20230319%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Date=20230319T072549Z&X-Amz-Expires=86400&X-Amz-Signature=d7caf6bfc27024242f693ea9130e94703e7e1f0a532ce858e21d5f2a808ad9f1&X-Amz-SignedHeaders=host',
-  })
-  roomCategoryThumbnail: string;
+  @ApiProperty({ type: () => RoomCategoryDto })
+  roomCategory: RoomCategoryDto;
 
   @ApiProperty({ example: 'text or link or 사진' })
   message: string;
@@ -37,8 +32,10 @@ export class MemoRoomDto {
 
     memoRoomDto.id = memoRoom.id;
     memoRoomDto.name = memoRoom.name;
-    memoRoomDto.roomCategoryName = memoRoom.roomCategory.name.name;
-    memoRoomDto.roomCategoryThumbnail = memoRoom.roomCategory.thumbnail;
+    memoRoomDto.roomCategory = {
+      ...memoRoom.roomCategory,
+      name: memoRoom.roomCategory.name.name,
+    };
     memoRoomDto.message = memoRoom.message;
     memoRoomDto.createdAt = memoRoom.createdAt;
     memoRoomDto.updatedAt = memoRoom.updatedAt;

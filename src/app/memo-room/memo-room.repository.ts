@@ -58,6 +58,7 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
           mr.created_at,
           mc.updated_at,
           mr.name,
+          rt.id AS room_category_id,
           rt.name AS room_category_name,
           rt.thumbnail AS room_category_thumbnail,
           mc.message,

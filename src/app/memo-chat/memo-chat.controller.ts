@@ -12,9 +12,12 @@ import { MemoRoomNotFoundException } from 'src/common/exceptions/memoroom-not-fo
 import { S3Service } from 'src/common/modules/s3/s3.service';
 import { ResponseEntity } from 'src/common/response/response-entity';
 import { User } from '../user/user.entity';
+import { ChatDto } from './dto/chat.dto';
 import { CreateMemoChatDto } from './dto/create-memochat.dto';
 import { DeleteMemoChatDto } from './dto/delete-memochat.dto';
-import { GetAllMemoChatDto } from './dto/getAll-memochat.dto';
+import { GetMemoChat } from './dto/get-memochat.dto';
+import { PageMetaDto } from './dto/page-meta.dto';
+import { PageOptionsDto } from './dto/page-option.dto';
 import { MemoChat } from './memo-chat.entity';
 import { MemoChatService } from './memo-chat.service';
 
@@ -37,16 +40,15 @@ export class MemoChatController {
   @Get('/:roomId/chats')
   @ApiOperation({ summary: '메모룸 내 전체 Chat 조회 API', description: ':roomId에 관한 전체 Chat을 조회합니다.' })
   @Auth()
-  @ApiSuccessResponse(HttpStatus.OK, MemoChat, { isArray: true })
+  @ApiSuccessResponse(HttpStatus.OK, ChatDto<GetMemoChat>)
   @ApiErrorResponse(BadParameterException, MemoRoomNotFoundException)
   async gets(
     @CurrentUser() user: User,
     @Param('roomId', ParseIntPipe) roomId: number,
-    @Query() getAllMemoChatDto: GetAllMemoChatDto,
+    @Query() pageOptionsDto: PageOptionsDto,
   ) {
-    const memoChat = await this.memoChatService.gets({ user, roomId, getAllMemoChatDto });
-
-    return ResponseEntity.OK_WITH_DATA(memoChat);
+    const existedMemoChats = await this.memoChatService.gets({ user, roomId, pageOptionsDto });
+    return ResponseEntity.OK_WITH_DATA(existedMemoChats);
   }
 
   @Patch('/:roomId/chats/:id')
