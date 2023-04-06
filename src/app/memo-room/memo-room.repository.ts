@@ -70,7 +70,7 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
           room_category rt ON rt.id = mr.room_category_id,
           memo_chat mc
       WHERE
-          mr.id = mc.room_id AND mr.user_id = 4
+          mr.id = mc.room_id AND mr.user_id = ${userId}
               AND mr.deleted_at IS NULL
               AND mc.updated_at IN (SELECT 
                   MAX(updated_at)
