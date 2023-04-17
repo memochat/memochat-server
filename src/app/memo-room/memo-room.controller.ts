@@ -50,7 +50,7 @@ export class MemoRoomController {
 
     return ResponseEntity.OK_WITH_DATA(
       categories.map((category) => {
-        category.thumbnail = this.s3Service.presignForGet(category.thumbnail);
+        category.thumbnail = `https://memochat-public.s3.ap-northeast-2.amazonaws.com/${category.thumbnail}`;
         return RoomCategoryDto.of(category);
       }),
     );
@@ -64,7 +64,8 @@ export class MemoRoomController {
 
     return ResponseEntity.OK_WITH_DATA(
       memoRooms.map((memoRoom) => {
-        memoRoom.roomCategory.thumbnail = this.s3Service.presignForGet(memoRoom.roomCategory.thumbnail);
+        // memoRoom.roomCategory.thumbnail = this.s3Service.presignForGet(memoRoom.roomCategory.thumbnail);
+        memoRoom.roomCategory.thumbnail = `https://memochat-public.s3.ap-northeast-2.amazonaws.com/${memoRoom.roomCategory.thumbnail}`;
         return MemoRoomDto.of(memoRoom);
       }),
     );
@@ -77,7 +78,8 @@ export class MemoRoomController {
   async get(@CurrentUser() user: User, @Param('id', ParseIntPipe) roomId: number) {
     const memoRoom = await this.memoRoomService.get({ user, roomId });
 
-    memoRoom.roomCategory.thumbnail = this.s3Service.presignForGet(memoRoom.roomCategory.thumbnail);
+    // memoRoom.roomCategory.thumbnail = this.s3Service.presignForGet(memoRoom.roomCategory.thumbnail);
+    memoRoom.roomCategory.thumbnail = `https://memochat-public.s3.ap-northeast-2.amazonaws.com/${memoRoom.roomCategory.thumbnail}`;
 
     return ResponseEntity.OK_WITH_DATA(MemoRoomDto.of(memoRoom));
   }
