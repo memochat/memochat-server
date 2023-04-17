@@ -95,6 +95,7 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
       mr2.message IS NULL
           AND rt2.id = mr2.room_category_id
           AND mr2.user_id = ${userId}
+          and deleted_at is null
   ORDER BY updated_at DESC;`,
       [userId],
     );
