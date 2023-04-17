@@ -13,7 +13,6 @@ import image from 'metascraper-image';
 import { MemoChat } from './memo-chat.entity';
 import { MemoRoomNotMatchedException } from 'src/common/exceptions/memoroom-not-matched.exception';
 import { MemoRoomService } from '../memo-room/memo-room.service';
-import { GetAllMemoChatDto } from './dto/getAll-memochat.dto';
 import { MemoChatNotFoundException } from 'src/common/exceptions/memochat-not-found.exception';
 import { DeleteMemoChatDto } from './dto/delete-memochat.dto';
 import { ChatDto } from './dto/chat.dto';
@@ -70,6 +69,7 @@ export class MemoChatService {
         user,
         roomId: existedMemoRoom.id,
         previousRoomId: existedMemoRoom.previousRoomId,
+        message: body.message,
       });
     }
     return { ...memoChat, type: memoChat.type.name };
@@ -100,7 +100,7 @@ export class MemoChatService {
     const [existedChats, total] = await this.memoChatRepository.findAndCount({
       select: {
         id: true,
-        updatedAt: true,
+        createdAt: true,
         message: true,
         title: true,
         link: true,
@@ -111,7 +111,7 @@ export class MemoChatService {
         },
       },
       where: { roomId },
-      order: { updatedAt: 'DESC' },
+      order: { createdAt: 'DESC' },
       cache: true,
       take,
       skip: (page - 1) * take,

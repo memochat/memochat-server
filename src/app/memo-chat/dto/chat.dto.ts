@@ -1,10 +1,17 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiExtraModels, ApiProperty, getSchemaPath } from '@nestjs/swagger';
 import { IsArray } from 'class-validator';
+import { GetMemoChat } from './get-memochat.dto';
 import { PageMetaDto } from './page-meta.dto';
 
-export class ChatDto<T> {
+@ApiExtraModels(GetMemoChat)
+export class ChatDto<T extends GetMemoChat> {
   @IsArray()
-  @ApiProperty({ isArray: true })
+  @ApiProperty({
+    type: 'array',
+    items: {
+      oneOf: [{ $ref: getSchemaPath(GetMemoChat) }],
+    },
+  })
   readonly data: T[];
 
   @ApiProperty({ type: () => PageMetaDto })

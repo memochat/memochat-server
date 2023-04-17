@@ -22,4 +22,11 @@ export class ImageController {
       results.map(({ key, presignedUrl }) => new PresignedUrlResponseDto({ key, url: presignedUrl })),
     );
   }
+
+  /*
+  image create => 복수 이미지 업로드 가능
+  delete => 우선 한 개만 삭제
+  Read  => 사진 전체 모아보기
+        => Union / Join으로 해서 메모챗 전체 조회 가져오기
+  */
 }

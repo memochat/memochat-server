@@ -54,32 +54,48 @@ export class MemoRoomRepository extends Repository<MemoRoom> {
   async getAllMemoRoomsWithRecursiveByUserId(userId: number) {
     const results = await this.dataSource.query(
       `SELECT 
-          mr.id,
-          mr.created_at,
-          mc.updated_at,
-          mr.name,
-          rt.id AS room_category_id,
-          rt.name AS room_category_name,
-          rt.thumbnail AS room_category_thumbnail,
-          mc.message,
-          mr.prev_room_id,
-          mr.next_room_id
-      FROM
-          memo_room mr
-              LEFT JOIN
-          room_category rt ON rt.id = mr.room_category_id,
-          memo_chat mc
-      WHERE
-          mr.id = mc.room_id AND mr.user_id = ${userId}
-              AND mr.deleted_at IS NULL
-              AND mc.updated_at IN (SELECT 
-                  MAX(updated_at)
-              FROM
-                  memo_chat
-              WHERE
-                  deleted_at IS NULL
-              GROUP BY room_id)
-      ORDER BY mc.updated_at DESC;`,
+      mr.id,
+      mr.created_at,
+      mc.updated_at,
+      mr.name,
+      rt.name AS room_category_name,
+      rt.thumbnail AS room_category_thumbnail,
+      mc.message,
+      mr.prev_room_id,
+      mr.next_room_id
+  FROM
+      memo_room mr
+          LEFT JOIN
+      room_category rt ON rt.id = mr.room_category_id,
+      memo_chat mc
+  WHERE
+      mr.id = mc.room_id AND mr.user_id = ${userId}
+          AND mr.deleted_at IS NULL
+          AND mc.updated_at IN (SELECT 
+              MAX(updated_at)
+          FROM
+              memo_chat
+          WHERE
+              deleted_at IS NULL
+          GROUP BY room_id) 
+  UNION SELECT 
+      mr2.id,
+      mr2.created_at,
+      mr2.updated_at,
+      mr2.name,
+      rt2.name AS room_category_name,
+      rt2.thumbnail AS room_category_thumbnail,
+      mr2.message,
+      mr2.prev_room_id,
+      mr2.next_room_id
+  FROM
+      memo_room mr2,
+      room_category rt2
+  WHERE
+      mr2.message IS NULL
+          AND rt2.id = mr2.room_category_id
+          AND mr2.user_id = ${userId}
+  ORDER BY updated_at DESC;`,
       [userId],
     );
 
