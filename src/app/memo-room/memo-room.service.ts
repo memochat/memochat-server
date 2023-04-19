@@ -84,17 +84,7 @@ export class MemoRoomService {
     await this.memoRoomRepository.softDelete({ id: roomId, user: { id: user.id } });
   }
 
-  async updateOrder({
-    user,
-    roomId,
-    previousRoomId,
-    message,
-  }: {
-    user: User;
-    roomId: number;
-    previousRoomId: number;
-    message: string;
-  }) {
+  async updateOrder({ user, roomId, previousRoomId }: { user: User; roomId: number; previousRoomId: number }) {
     const memoRoom = await this.memoRoomRepository.findOneExludeDeletedRowBy({ user: { id: user.id }, id: roomId });
     if (!memoRoom) {
       throw new MemoRoomNotFoundException();

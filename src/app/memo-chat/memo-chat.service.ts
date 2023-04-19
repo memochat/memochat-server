@@ -62,6 +62,8 @@ export class MemoChatService {
 
     memoChat.message = body.message;
     memoChat.roomId = roomId;
+    existedMemoRoom.message = body.message;
+    this.memoRoomRepository.save(existedMemoRoom);
     await this.memoChatRepository.save(memoChat);
 
     if (existedMemoRoom.previousRoomId !== null && existedMemoRoom.nextRoomId !== null) {
@@ -69,7 +71,6 @@ export class MemoChatService {
         user,
         roomId: existedMemoRoom.id,
         previousRoomId: existedMemoRoom.previousRoomId,
-        message: body.message,
       });
     }
     return { ...memoChat, type: memoChat.type.name };
@@ -188,6 +189,8 @@ export class MemoChatService {
     }
 
     willUpdateMemoChat.message = message;
+    existedMemoRoom.message = message;
+    this.memoRoomRepository.save(existedMemoRoom);
     await this.memoChatRepository.save(willUpdateMemoChat);
 
     return { ...willUpdateMemoChat, type: willUpdateMemoChat.type.name };

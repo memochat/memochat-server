@@ -93,7 +93,7 @@ export class MemoRoomController {
     @Param('id', ParseIntPipe) roomId: number,
     @Body() body: UpdateMemoRoomOrederRequest,
   ) {
-    await this.memoRoomService.updateOrder({ user, roomId, previousRoomId: body.previousRoomId, message: body.message });
+    await this.memoRoomService.updateOrder({ user, roomId, previousRoomId: body.previousRoomId });
   }
 
   @Delete('/:id')
