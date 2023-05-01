@@ -121,6 +121,10 @@ export class MemoChatService {
     const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
     const lastPage = Math.ceil(total / take);
 
+    if (total === 0) {
+      return { data: [], meta: null };
+    }
+
     if (lastPage >= page) {
       return {
         data: existedChats.map((existedChat) => ({
